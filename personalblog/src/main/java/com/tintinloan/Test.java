@@ -1,4 +1,4 @@
-package com.lp;
+package com.tintinloan;
 
 public class Test {
 

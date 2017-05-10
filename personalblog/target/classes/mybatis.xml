@@ -10,7 +10,5 @@
 		<plugin interceptor="com.tintinloan.codelets.dao.pagination.PaginationInterceptor">
 			<property name="dialect" value="mysql" />
 		</plugin>
-		<!-- 暂无启用读写分离 -->
-		<!-- <plugin interceptor="com.tintinloan.dataSource.DynamicPlugin"></plugin> -->
 	</plugins>
 </configuration>
