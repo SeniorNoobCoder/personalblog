@@ -1,0 +1,1 @@
+mvn install:install-file -DgroupId=com.CCP_REST_SDK_JAVA -DartifactId=CCP_REST_SDK_JAVA_v2.7r -Dversion=2.7 -Dpackaging=jar -Dfile=H:/CCP_REST_SDK_JAVA_v2.7r.jar  

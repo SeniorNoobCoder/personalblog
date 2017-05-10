@@ -1,0 +1,8 @@
+
+#rendered-form {
+  clear: both;
+  display: none;
+}
+#rendered-form button {
+  float: right;
+}

@@ -7,28 +7,18 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-    <base href="<%=basePath%>">
-    
-    <title>personalblog</title>
-    
-	<meta http-equiv="pragma" content="no-cache">
-	<meta http-equiv="cache-control" content="no-cache">
-	<meta http-equiv="expires" content="0">    
-	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-	<meta http-equiv="description" content="This is my page">
-	<!--
-	<link rel="stylesheet" type="text/css" href="styles.css">
-	-->
-
+    <title>E看护服务系统平台</title>
   </head>
   
   <body>
-    <h1><p align="center">welcome  to  my first project</p></h1><br>
-    <div align="center">
-   	 <img src="<%=basePath%>images/love.jpg"  alt="" style="width:200px;height: 200px;"/>
-     <img src="<%=basePath%>images/welcome.png"  alt="" style="width:200px;height: 200px;"/><br/>
-     <img src="<%=basePath%>images/lp.jpg"  alt="" style="width:200px;height: 200px;"/>
-     <img src="<%=basePath%>images/ymx.jpg"  alt="" style="width:200px;height: 200px;"/>
-    </div>
+      	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery-1.9.1.min.js"></script>
+	    <script type="text/javascript">
+	    	$(document).ready(function (){ 
+	    		tz();
+	    	});
+	    	function tz(){
+	    		window.location.href="${pageContext.request.contextPath}/system/login/toLogin.do";
+	    	}
+	    </script>
   </body>
 </html>

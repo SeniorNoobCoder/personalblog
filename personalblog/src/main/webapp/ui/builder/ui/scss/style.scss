@@ -1,0 +1,12 @@
+body{
+  background: lightgrey;
+  font-family: sans-serif;
+}
+
+#rendered-form {
+  clear:both;
+  display:none;
+  button{
+    float:right;
+  }
+}
