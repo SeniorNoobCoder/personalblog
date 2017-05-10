@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+	version="2.0">
+	<tlib-version>1.0</tlib-version>
+	<short-name>ttl</short-name>
+	<tag>
+		<name>fieldValue</name>
+		<tag-class>com.tintinloan.oams.common.taglib.FieldValueTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>dictName</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			
+		</attribute>
+		<attribute>
+			<name>dictKey</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<name>fieldRemark</name>
+		<tag-class>com.tintinloan.oams.common.taglib.FieldRemarkTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>dictName</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			
+		</attribute>
+		<attribute>
+			<name>dictKey</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<name>selectDict</name>
+		<tag-class>com.tintinloan.oams.common.taglib.SelectTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>id</name>
+			
+		</attribute>
+		<attribute>
+			<name>dictName</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>styleClass</name>
+			
+		</attribute>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+		</attribute>
+		
+		<attribute>
+			<name>property</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	
+	<tag>
+		<name>selectCycle</name>
+		<tag-class>com.tintinloan.oams.common.taglib.CycleTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>id</name>
+		</attribute>
+		
+		<attribute>
+			<name>downLimit</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>upLimit</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>unit</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>current</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>styleClass</name>
+		</attribute>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			
+		</attribute>
+	</tag>
+</taglib>  
