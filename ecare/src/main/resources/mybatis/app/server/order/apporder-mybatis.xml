@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecare.app.server.apporder">
+	
+	<!-- 根据订单状态查询订单信息 -->
+	<select id="findStatusList" resultType="pd" parameterType="page"  >
+		select
+			a.id as "id",
+			a.appointment_time AS "appointment_time",
+			a.server_category_name as "server_category_name",
+			a.customer_address as "customer_address",
+			a.remark as "remark",
+			a.order_source AS "order_source",
+			a.others_server AS "others_server",
+			a.pay_type AS "pay_type",
+			a.receiving as "receiving",
+			a.status AS "status",
+			a.amount AS amount
+		from
+			customer_order a
+			LEFT JOIN app_users_server_category b ON a.server_category_id = b.category_id
+			where 1=1 and a.remove_logo='N' 
+			<if test="status != null and status != '' and status != '-1'" >
+				and a.status =#{status}
+			</if>
+			<if test="statusTwo != null and statusTwo != ''">
+				and (a.status = #{statusTwo} OR a.status = #{statusThree})
+			</if>
+			<if test="business_id != null and business_id != '' " >
+				and b.business_id = #{business_id}
+			</if>
+			<if test="server_user_id != null and server_user_id != ''">
+				and a.server_user_id = #{server_user_id}
+			</if>
+				order by a.update_time desc
+			<if test="endPage != null and endPage != ''">
+	   			limit #{startPage},#{endPage}
+   			</if>
+	</select>
+		
+		<!-- 查找已支付-->
+		<select id="findPayList" resultType="pd" parameterType="page"  >
+		select
+			a.id as "id",
+			a.appointment_time AS "appointment_time",
+			a.server_category_name as "server_category_name",
+			a.customer_address as "customer_address",
+			a.remark as "remark",
+			a.order_source AS "order_source",
+			a.others_server AS "others_server",
+			a.pay_type AS "pay_type",
+			a.receiving as "receiving",
+			a.status AS "status",
+			a.amount AS amount
+		from
+			customer_order a
+			LEFT JOIN app_users_server_category b ON a.server_category_id = b.category_id
+			where 1=1 and a.remove_logo='N' and (a.status='5'or a.status='6')
+			<if test="server_user_id != null and server_user_id != ''">
+				and a.server_user_id = #{server_user_id}
+			</if> 
+				<if test="business_id != null and business_id != '' " >
+				and b.business_id = #{business_id}
+			</if>
+				order by a.update_time desc
+			<if test="endPage != null and endPage != ''">
+	   			limit #{startPage},#{endPage}
+   			</if>
+	</select>
+	
+		<!-- 查询订单已支付的数量 -->
+	<select id="findPayListNum" resultType="Integer" parameterType="pd">
+		SELECT
+			COUNT(*) as num
+		FROM
+			customer_order AS a
+			LEFT JOIN app_users_server_category b ON a.server_category_id = b.category_id
+		where a.remove_logo='N'
+		<if test="server_user_id != null and server_user_id != ''">
+			and a.server_user_id = #{server_user_id}
+		</if>
+			<if test="business_id != null and business_id != '' " >
+				and b.business_id = #{business_id}
+			</if>
+		and (a.status='5'or a.status='6')
+    </select>
+	
+	<!-- 查询订单的数量数量 -->
+	<select id="findListNum" resultType="Integer" parameterType="pd">
+		SELECT
+			COUNT(*) as num
+		FROM
+			customer_order AS a
+			LEFT JOIN app_users_server_category b ON a.server_category_id = b.category_id
+		where a.remove_logo='N'
+		<if test="status != null and status != ''and status != '-1' ">
+			and a.status =#{status}
+		</if>
+		<if test="statusTwo != null and statusTwo != ''">
+			and (a.status = #{statusTwo} OR a.status = #{statusThree})
+		</if>
+		<if test="business_id != null and business_id != '' " >
+				and b.business_id = #{business_id}
+			</if>
+		<if test="server_user_id != null and server_user_id != ''">
+			and a.server_user_id = #{server_user_id}
+		</if>
+    </select>
+	
+	
+	<!-- 获取session_id -->
+	<select id="findSessionInfo" parameterType="pd" resultType="pd">
+		select
+			a.id as "id",
+			a.user_type as "user_type",
+			a.login_name as "login_name",
+			a.status as "status",
+			a.user_type as "user_type",
+			a.session_id as "session_id",
+			a.login_password as "login_password",
+			a.isAuthent as "isAuthent",
+			a.is_work as "is_work",
+			a.nickname as "nickname",
+			a.phone as "phone",
+			b.authent_name as "authent_name",
+			b.partner_code as "partner_code",
+			b.partner_id as "partner_id",
+			b.PID as "PID",
+			b.idCard_back as "idCard_back",
+			b.idCard_front as "idCard_front",
+			b.step as "step"
+		from app_users a
+		left join app_users_authent b on a.id=b.business_id
+		where 1=1 and  a.remove_logo='N' and a.status='1'
+			<if test="session_id != null and session_id != '' ">
+    			 and a.session_id = #{session_id}
+    	 	</if>
+    	 <!-- 	<if test="id != null and id != '' ">
+    			 and a.id = #{id}
+    	 	</if> -->
+	</select>
+	
+	
+	<!-- 获取订单详情 -->
+	<select id="findOrderInfo"  parameterType="pd" resultType="pd">
+		select
+			a.id as "id",
+			a.appointment_time AS "appointment_time",
+			a.server_category_name as "server_category_name",
+			a.customer_address as "customer_address",
+			a.remark as "remark",
+			a.customer_id as "customer_id",
+			a.order_no as "order_no",
+			a.customer_sn as "customer_sn",
+			a.customer_phone as "customer_phone",
+			a.customer_name as "customer_name",
+			a.amount as "amount",
+			a.pay_type as "pay_type",
+			a.status as "status",
+			a.order_no as "order_no",
+			a.order_source AS "order_source",
+			a.others_server AS "others_server",
+			a.server_user_id as "server_user_id"
+		from
+			customer_order a
+			where 1=1 and a.remove_logo='N' and a.id=#{id}
+	
+	</select>
+	
+	<!-- 根据订单编号查询点单流程 -->
+	<select id="findFlowList" parameterType="pd" resultType="pd">
+		SELECT
+			a.order_no as "order_no",
+			a.status as "status",
+			a.create_time as "create_time"
+		FROM
+			customer_order_flow a where a.order_no=#{order_no}
+		ORDER BY create_time desc
+	</select>
+	
+
+	
+	<!-- 立即抢单 -->
+	<update id="update" parameterType="pd">
+		update customer_order set
+			<if test="status != null and status != '' ">
+				status=#{status},
+			</if>
+			<if test="server_user_id != null and server_user_id != '' ">
+				server_user_id=#{server_user_id},
+			</if>
+			update_time=NOW()
+    		where id=#{id}
+	
+	</update>
+	
+	
+	<!-- 添加订单流程 -->
+	<insert id="save" parameterType="pd">
+		insert into customer_order_flow (
+        order_no,
+        status,
+        operator_id,
+        operator_name,
+        create_time,
+        is_read,
+        remark)
+        values (
+        #{order_no},
+        #{status},
+        #{operator_id},
+        #{operator_name},
+       	NOW(),
+       	'N',
+       	#{remark})
+	
+	</insert>
+	
+	<!-- 确认开工、取消订单（普通订单取消）、支付方式 -->
+	<update id="updateStatus" parameterType="pd">
+		update customer_order set
+			<if test="status != null and status != '' ">
+				status=#{status},
+			</if>
+			update_time=NOW()
+    		where id=#{id}	
+	</update>
+	
+	<!-- 确认接单 -->
+	<update id="updateOrders" parameterType="pd">
+		update customer_order set
+			<if test="receiving != null and receiving != '' ">
+				receiving=#{receiving},
+			</if>
+			<if test="status != null and status != '' ">
+				status=#{status},
+			</if>
+			update_time=NOW()
+    		where id=#{id}	
+	</update>
+	
+	<!-- 取消订单（接受其他人服务的） -->
+	<update id="updateServer" parameterType="pd">
+		update customer_order set
+			<if test="status != null and status != '' ">
+				status=#{status},
+			</if>
+			<if test="receiving != null and receiving != '' ">
+				receiving=#{receiving},
+			</if>
+			<if test="others_server != null and others_server != '' ">
+				others_server=#{others_server},
+			</if>
+				server_user_id=#{server_user_id},
+			update_time=NOW()
+    	where id=#{id}	
+	</update>
+	
+	
+	<!-- 支付方式 -->
+	<update id="updatePay" parameterType="pd">
+		update customer_order set
+			<if test="status != null and status != '' ">
+				status=#{status},
+			</if>
+			<if test="amount != null and amount != '' ">
+				amount=#{amount},
+			</if>
+			update_time=NOW()
+    	where id=#{id}	
+	</update>
+	
+	<!-- 查询修改后的信息 -->
+	<select id="findUserInfo" parameterType="pd" resultType="pd">
+		select
+			a.id as "id",
+			a.sex as "sex",
+			a.live_address as "live_address",
+			a.session_id as "session_id",
+			a.head_address as "head_address",
+			a.nickname as "nickname",
+			a.phone as "phone"
+		from app_users a
+		where 1=1 and  a.remove_logo='N' and a.status='1'
+			<if test="session_id != null and session_id != '' ">
+    			 and a.session_id = #{session_id}
+    	 	</if>
+	</select>
+	
+	<!-- 查询家人的sessionid -->
+	<select id="findfamilyList" parameterType="pd" resultType="pd">
+		SELECT
+			b.session_id
+		FROM
+			customer_family_device a
+		LEFT JOIN app_users b ON a.family_id = b.id
+		WHERE a.sn = #{sn}
+		
+	 
+	</select>
+	
+	
+	
+	
+</mapper>

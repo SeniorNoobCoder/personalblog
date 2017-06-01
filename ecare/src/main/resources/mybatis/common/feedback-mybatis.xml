@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.ecare.web.common.feedback">
+
+	<!-- 查询列表信息 -->
+	<select id="findListPage" parameterType="Page" resultType="pd">
+		SELECT
+			a.id AS id,
+			a.type AS type,
+			a.content AS content,
+			a.`status` AS `status`,
+			a.create_time AS create_time,
+			a.create_user AS create_user,
+			a.dealwith_time AS dealwith_time,
+			a.dealwith_remark AS dealwith_remark,
+			a.dealwith_user AS dealwith_user,
+			a.remove_logo AS remove_logo,
+			b.phone AS userPhone
+		FROM
+			common_feedback a
+		LEFT JOIN app_users b ON a.create_user = b.id
+		where 1=1
+		<if test="pd.remove_logo != null and pd.remove_logo != ''">
+		and a.remove_logo=#{pd.remove_logo}
+		</if>
+		<if test="pd.status != null and pd.status != ''"><!-- 状态 -->
+		and a.status = #{pd.status}
+		</if>
+		order by a.create_time desc
+	</select>
+	
+	<!--查看信息详情-->
+    <select id="findInfo" parameterType="pd" resultType="pd">
+    	SELECT
+			a.id,
+			a.type,
+			a.content,
+			a.`status`,
+			a.create_time,
+			a.create_user,
+			a.dealwith_time,
+			a.dealwith_user,
+			a.dealwith_remark,
+			a.remove_logo,
+			b.phone AS userPhone,
+			d.user_name AS dealwith_Name
+		FROM
+			common_feedback a
+		LEFT JOIN app_users b ON a.create_user = b.id
+		LEFT JOIN system_user d ON a.dealwith_user = d.id
+    	where a.id=#{id}
+    </select>
+    
+    <!-- 添加反馈信息 -->
+	<insert id="save" parameterType="pd">
+		insert into common_feedback (
+    			type,
+    			content,
+    			status,
+    			create_time,
+    			create_user,
+    			dealwith_time,
+    			dealwith_remark,
+    			dealwith_user,
+    			remove_logo
+    			)
+    			values
+    			(
+				#{type},
+				#{content},
+				#{status},
+				#{create_time},
+				#{create_user},
+				#{dealwith_time},
+				#{dealwith_remark},
+				#{dealwith_user},
+				#{remove_logo}
+				)
+    </insert>
+    
+    <!--更新信息-->
+    <update id="update" parameterType="pd">
+    	update common_feedback set 
+			
+			<if test="status != null and status != '' ">
+				status=#{status},
+			</if>
+			<if test="dealwith_user != null and dealwith_user != '' ">
+				dealwith_user=#{dealwith_user},
+			</if>
+			<if test="dealwith_remark != null and dealwith_remark != '' ">
+				dealwith_remark=#{dealwith_remark},
+			</if>
+			<if test="remove_logo != null and remove_logo != '' ">
+				remove_logo=#{remove_logo},
+			</if>
+    		dealwith_time=#{dealwith_time}
+    		where id=#{id}
+    		
+    </update>
+    
+     <!--删除信息-->
+    <delete id="delete" parameterType="String">
+    	delete from common_feedback where id=#{id}
+    </delete>
+    
+    
+    <!--查询已删除信息数量-->
+    <select id="findDelNum" parameterType="pd" resultType="Integer">
+    	select count(*) from common_feedback where remove_logo='Y' 
+    </select>
+    
+    <!--查询已删除用户ids-->
+    <select id="findListIds" parameterType="pd" resultType="Integer">
+    	select 
+    		a.id as "id"
+    	 from common_feedback a
+    	 where a.remove_logo='Y'
+    </select>
+    </mapper>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecare.app.server.appserver">
+	
+	<!-- 下订单 -->
+	<insert id="saveOder" parameterType="pd">
+		insert into customer_order (
+        order_no,
+        order_source,
+        server_category_id,
+        server_category_name,
+        appointment_time,
+        server_info_id,
+        customer_id,
+        customer_sn,
+        customer_phone,
+        customer_name,
+        customer_address,
+        remark,
+        create_time,
+        create_user,
+        amount,
+        server_user_id,
+        pay_type,
+        others_server,
+        status,
+        remove_logo,
+        receiving,
+        warning,
+        update_time)
+        values (
+        #{order_no},
+        #{order_source},
+        #{server_category_id},
+        #{server_category_name},
+       	#{appointment_time},
+       	#{server_info_id},
+       	#{customer_id},
+       	#{customer_sn},
+       	#{customer_phone},
+       	#{customer_name},
+       	#{customer_address},
+       	#{remark},
+       	NOW(),
+       	#{create_user},
+       	#{amount},
+       	#{server_user_id},
+       	#{pay_type},
+       	#{others_server},
+       	#{status},
+       	#{remove_logo},
+       	#{receiving},
+       	'N',
+       	NOW())
+	</insert>
+	
+	<!-- 查询服务对象 -->
+	<select id="findServiceList"  parameterType="pd" resultType="pd">
+		SELECT
+			a.id as "id",
+			a.family_id as "family_id",
+			a.device_id as "device_id",
+			a.sn as "sn",
+			a.relationship as "relationship",
+			c.name as "name",
+			c.address as "address",
+			c.phone as "phone",
+			c.id as "sbid"
+		FROM
+			customer_family_device a
+			LEFT JOIN app_users b on a.family_id =b.id
+			LEFT JOIN customer_user c on c.device_id =a.device_id
+		where 1=1
+		<if test="family_id != null and family_id != '' ">
+			and a.family_id=#{family_id}
+		</if>
+	</select>
+	
+	<!-- 根据server_user_id进行查找 -->
+	<select id="findUserInfo"  parameterType="pd" resultType="pd">
+		SELECT
+			a.session_id
+		FROM
+			app_users a
+			where a.id=#{id}
+	</select>
+	
+	<!-- 查询要推送的商户(立即下单 没有server_info_id） -->
+	<select id="findTsList" parameterType="pd" resultType="pd">
+		SELECT
+			b.session_id
+		FROM
+			app_users_server_category a
+		LEFT JOIN app_users b ON a.business_id = b.id
+		LEFT JOIN app_users_authent d ON b.id = d.business_id
+		WHERE
+			a.category_id = #{category_id}
+	</select>
+	
+	<!-- 查询要推送的商户(服务信息 合作商下的商户进行推送） -->
+	<select id="findTshList" parameterType="pd" resultType="pd">
+		SELECT
+		b.session_id
+		FROM
+			app_users_server_category a
+		LEFT JOIN app_users b ON a.business_id = b.id
+		LEFT JOIN app_users_authent d ON b.id = d.business_id
+		WHERE
+			a.category_id =#{id}
+		<if test="partner_id != null and partner_id != '' ">
+			AND d.partner_id =#{partner_id}
+		</if>
+	</select>
+	
+	
+</mapper>

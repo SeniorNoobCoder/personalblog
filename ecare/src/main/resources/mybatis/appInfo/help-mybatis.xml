@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecare.web.appInfo.help">
+    <!-- 查询列表信息 -->
+    <select id="findListPage" parameterType="Page" resultType="pd">
+        SELECT
+        a.id,
+        a.type,
+        a.title,
+        a.content,
+        a.create_time,
+        a.create_user,
+        a.update_time,
+        a.`status`
+        FROM
+        app_help a
+        WHERE  1=1
+        <if test="pd.type != null and pd.type != ''">
+            and  a.type = #{pd.type}
+        </if>
+        <if test="pd.status != null and pd.status != ''">
+            AND a.status = #{pd.status}
+        </if>
+        ORDER BY a.create_time DESC
+    </select>
+
+    <!--查询版本信息详情-->
+    <select id="findInfo" parameterType="pd" resultType="pd">
+        SELECT
+        a.id,
+        a.type,
+        a.title,
+        a.content,
+        a.create_time,
+        a.create_user,
+        a.update_time,
+        a.`status`
+        FROM
+        app_help a
+        where a.id=#{id}
+    </select>
+
+    <!-- 添加版本信息 -->
+    <insert id="save" parameterType="pd">
+        insert into app_help (
+        type,
+        title,
+        content,
+        status,
+        create_user,
+        create_time,
+        update_time
+        )
+        values
+        (
+        #{type},
+        #{title},
+        #{content},
+        #{status},
+        #{create_user},
+        NOW(),
+        NOW()
+        )
+    </insert>
+
+    <!--更新信息-->
+    <update id="update" parameterType="pd">
+        update app_help set
+        <if test="title != null and title != '' ">
+            title=#{title},
+        </if>
+        <if test="type != null and type != '' ">
+            type=#{type},
+        </if>
+        <if test="status != null and status != '' ">
+            status=#{status},
+        </if>
+        <if test="content != null and content != '' ">
+            content=#{content},
+        </if>
+        update_time= NOW()
+        where id=#{id}
+    </update>
+
+    <!--删除信息-->
+    <delete id="delete" parameterType="String">
+        delete from app_help where id=#{id}
+    </delete>
+</mapper>

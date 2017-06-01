@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecare.web.system.quickMenu">
+
+	<!--  -->
+    <select id="findList" resultType="pd" parameterType="pd">
+		select
+			a.id as "id",
+			a.one_menu as "one_menu",
+			a.two_menu as "two_menu",
+			a.level as "level",
+			a.remark as "remark",
+			a.type as "type",
+			a.create_user as "create_user",
+			a.create_time as "create_time",
+			a.update_time as "update_time",
+			b.name as "one_menu_name",
+			c.name as "two_menu_name",
+			c.url as "url",
+			c.icon as "icon"
+			from common_quick_menu as a
+			left join system_menu b on a.one_menu = b.id
+			left join system_menu c on a.two_menu = c.id
+			where 1=1
+			<if test="type != null and type != ''">
+				and a.type = #{type}
+			</if> 
+			<if test="create_user != null and create_user != ''">
+				and a.create_user = #{create_user}
+			</if> 
+			order by a.level asc
+    </select>
+    
+    <select id="findPd" parameterType="pd" resultType="pd">
+    	select
+			a.id as "id",
+			a.one_menu as "one_menu",
+			a.two_menu as "two_menu",
+			a.level as "level",
+			a.remark as "remark",
+			a.type as "type",
+			a.create_user as "create_user",
+			a.create_time as "create_time",
+			a.update_time as "update_time",
+			b.name as "one_menu_name",
+			c.name as "two_menu_name",
+			c.url as "url",
+			c.icon as "icon"
+			from common_quick_menu as a
+			left join system_menu b on a.one_menu = b.id
+			left join system_menu c on a.two_menu = c.id
+			where a.level=#{level} and a.type=#{type}
+			<if test="create_user != null and create_user != ''">
+				and a.create_user = #{create_user}
+			</if> 
+    </select>
+  
+    
+    <select id="findInfo" resultType="pd" parameterType="pd">
+    	select
+			a.id as "id",
+			a.one_menu as "one_menu",
+			a.two_menu as "two_menu",
+			a.level as "level",
+			a.remark as "remark",
+			a.type as "type",
+			a.create_user as "create_user",
+			a.create_time as "create_time",
+			a.update_time as "update_time",
+			b.name as "one_menu_name",
+			c.name as "two_menu_name"
+			from common_quick_menu as a
+			left join system_menu b on a.one_menu = b.id
+			left join system_menu c on a.two_menu = c.id
+			where a.id=#{id}
+    </select>
+    
+    <update id="update" parameterType="pd">
+    	update common_quick_menu set
+		    <if test="one_menu != null and one_menu != ''">
+				one_menu = #{one_menu},
+			</if>
+			 <if test="two_menu != null and two_menu != ''">
+				two_menu = #{two_menu},
+			</if>
+			<if test="level != null and level != ''">
+				level = #{level},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark = #{remark},
+			</if>
+			<if test="type != null and type != ''">
+				type = #{type},
+			</if>
+			<if test="create_user != null and create_user != ''">
+				create_user = #{create_user}
+			</if>
+			update_time=#{update_time}
+			where id=#{id}
+    </update>
+    
+   <delete id="delete" parameterType="String">
+    	delete from common_quick_menu where id=#{id}
+   </delete>
+    
+      
+    <insert id="save" parameterType="pd">
+    	insert into common_quick_menu(one_menu,two_menu,level,remark,type,create_time,create_user,update_time)
+    		values
+    		(#{one_menu},#{two_menu},#{level},#{remark},#{type},#{create_time},#{create_user},#{update_time})
+    </insert>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+   
+</mapper>

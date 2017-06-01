@@ -1,0 +1,84 @@
+/*!
+ * FullCalendar v1.6.1 Stylesheet
+ * Docs & License: http://arshaw.com/fullcalendar/
+ * (c) 2013 Adam Shaw
+ */
+
+.info-news-blue{ background:#8ac1e6; width:23%; height:100px; float:left; margin-left:10px;}
+.info-news-green{ background:#adc959; width:23%; height:100px; float:left; margin-left:10px;}
+.info-news-pink{ background:#d58ade; width:23%; height:100px; float:left; margin-left:10px;}
+.info-news-red{ background:#dd6364; width:23%; height:100px; float:left; margin-left:10px;}
+.infobox-top{ height:75px; clear:both;}
+.infobox-bot{ color:#fff; line-height:25px; padding-left:5px; clear:both;}
+.infobox-bot a{ padding:6px 10px;}
+.infobox-bot-blue{ height:25px; background:#6fb3e0;}
+.infobox-bot-green{ height:25px; background:#9abc32;}
+.infobox-bot-pink{ height:25px; background:#cb6fd7;}
+.infobox-bot-red{ height:25px; background:#d53f40;}
+.infobox-top-left1{ background:url(../img/info-icon1.png) no-repeat center center; width:60px; height:75px; float:left;}
+.infobox-top-left2{ background:url(../img/info-icon2.png) no-repeat center center; width:60px; height:75px; float:left;}
+.infobox-top-left3{ background:url(../img/info-icon3.png) no-repeat center center; width:60px; height:75px; float:left;}
+.infobox-top-left4{ background:url(../img/info-icon4.png) no-repeat center center; width:60px; height:75px; float:left;}
+.infobox-top-right{ color:#fff; padding:10px 10px 0 10px;}
+.infobox-top-right p a{ color:#fff; font-size:20px; line-height:30px;}
+.infobox-top-right h1{ font-size:14px;  line-height: 20px;}
+
+.styled-select {
+   width: 105px;
+   height: 45px;
+   overflow: hidden;
+}
+.new-arrow{position: absolute;
+    right: 5px;
+    top: 20px;}
+    
+/*头部*/   
+.bignav{ margin-top:-8px; margin-left:25%;}
+ .bignav li{ float:left; color:#fff; height:45px; line-height:45px;    padding: 0 10px; list-style:none;}
+.bignav li a{ color:#fff; height:40px; display:block; padding-left:30px;}
+.xxby{ background:url(../img/nav-icon2.png) no-repeat left center;}
+.xxby2{ background:url(../img/nav-xz-icon2.png) no-repeat left center;}
+.jjgc{ background:url(../img/nav-icon1.png) no-repeat left center;}
+.jjgc2{ background:url(../img/nav-xz-icon1.png) no-repeat left center;}
+.nav-xz{ background:#fff;}
+.nav-xz a{ color:#438eb9 !important;}
+/*天气*/
+.clear{clear:both;}
+.fl{ float:left;}
+.main-left{ float:left; width:40%;}
+.main-left img{ width:90%; }
+@media screen and (max-width:960px) { 
+.main-left{ float:left;}
+.main-left img{ width:300px; height:250px; }
+}
+
+.main-right {
+    float: left;
+    width: 380px;
+    margin-right: 90px;
+    margin-top: 20px;
+}
+.tjb{ float:left; margin-left:20px;}
+.tqyb{ background:#74b5db; width:380px; color:#fff; padding:20px;}
+.tqtz{ background:#74b5db; width:380px; color:#fff;}
+	.tqtz p{text-indent:20px; font-size:14px; margin:0;}
+	.bjs1{ background:#83bddf;width: 420px;
+    height: 40px;
+    line-height: 40px;}
+	.bjs2{ background:#94c9e6;width: 420px;
+    height: 40px;
+    line-height: 40px;}
+.style1{font-size:16px; line-height:25px;}
+.style2{font-size: 30px;
+	    font-weight: bold;
+	    margin-top: 20px;
+	    margin-left: 10px;}
+.tqimg img{width:55px; height:55px;}
+.style3{ border-left:2px solid #fff;height:50px; padding-left:10px;}
+.tq-bottom{margin-top:10px;}
+.tq-bottom ul{margin:0;}
+.tq-bottom li{  margin-right: 5px;font-size:16px; width:90px; float:left; list-style:none; text-align:left;}
+.tq-bottom li img{ width:40px; height:35px;}
+.tq-bottom li img{ width:40px; height:40px;}
+#zhongxin table td input{margin-bottom:0 !important;width: 95%;}
+#zhongxin table td select{width: 95%;margin-bottom:0 !important;}

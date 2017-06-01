@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecare.web.order.orderFlow">
+    <!--查询信息列表-->
+    <select id="findList" parameterType="pd" resultType="pd">
+        SELECT  * FROM customer_order_flow
+        WHERE 1=1
+        <if test="order_no != null and order_no != '' ">
+            AND order_no = #{order_no}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <!--根据订单编号查询信息列表-->
+    <select id="findListByOrderNo" resultType="pd" parameterType="String">
+        SELECT  * FROM customer_order_flow
+        WHERE 1=1
+        <if test="_parameter != null and _parameter != '' ">
+            AND order_no = #{_parameter}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <!--保存信息-->
+    <insert id="save" parameterType="pd">
+        insert into customer_order_flow (
+        order_no,
+        status,
+        operator_id,
+        operator_name,
+        create_time,
+        remark)
+        values (
+        #{order_no},
+        #{status},
+        #{operator_id},
+        #{operator_name},
+        NOW(),
+        #{remark})
+    </insert>
+</mapper>

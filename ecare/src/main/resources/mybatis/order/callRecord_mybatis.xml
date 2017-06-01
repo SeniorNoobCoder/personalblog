@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecare.web.order.callRecord">
+    <!--查询信息列表-->
+    <select id="findListPage" resultType="pd" parameterType="page">
+        SELECT
+            a.id,
+            a.customer_sn,
+            a.create_time,
+            a.callPhone,
+            a.`status`,
+            a.operator_id,
+            a.operator_name,
+            a.operator_time,
+            a.remove_logo,
+            a.type,
+            a.remark,
+            b.id AS customer_id
+        FROM
+          customer_call_record a
+        LEFT JOIN customer_user b ON a.customer_sn = b.sn
+        WHERE
+        1 = 1
+        <if test="pd.status != null and pd.status != ''"><!-- 状态检索 -->
+            and a.status=#{pd.status}
+        </if>
+        <if test="pd.remove_logo != null and pd.remove_logo != ''">
+            and a.remove_logo=#{pd.remove_logo}
+        </if>
+        order by a.create_time desc
+    </select>
+
+    <!--查询信息列表-->
+    <select id="findList" parameterType="pd" resultType="pd">
+        SELECT
+        ccr.id,
+        ccr.customer_sn,
+        ccr.create_time,
+        ccr.`status`,
+        ccr.operator_id,
+        ccr.operator_name,
+        ccr.operator_time,
+        cu.`name`,
+        cu.phone,
+        cu.address,
+        cu.sex,
+        cu.id as customer_id
+        FROM
+        customer_call_record ccr
+        LEFT JOIN customer_user cu ON ccr.customer_sn = cu.sn
+        WHERE 1=1
+        <if test="status != null and status != ''"><!-- 状态检索 -->
+            and ccr.status=#{status}
+        </if>
+        <if test="remove_logo != null and remove_logo != ''">
+            and ccr.remove_logo=#{remove_logo}
+        </if>
+        <if test="customer_sn != null and customer_sn != ''">
+            and ccr.customer_sn like concat('%', #{customer_sn},'%')
+        </if>
+        <if test="name != null and name != ''">
+            and cu.name LIKE  concat('%', #{name},'%')
+        </if>
+        order by ccr.create_time desc
+    </select>
+    <!--保存信息-->
+    <insert id="save" parameterType="pd">
+        insert into customer_call_record (
+        customer_sn,
+        create_time,
+        callPhone,
+        status,
+        operator_id,
+        operator_time,
+        remove_logo)
+        values (
+        #{customer_sn},
+        NOW(),
+        #{callPhone},
+        #{status},
+        #{operator_id},
+        #{operator_time},
+        #{remove_logo})
+    </insert>
+
+    <!--受理来电电话-->
+    <update id="updateStatus" parameterType="pd">
+        update customer_call_record set
+        <if test="operator_id != null and operator_id != '' ">
+            operator_id=#{operator_id},
+        </if>
+        <if test="operator_name != null and operator_name != '' ">
+            operator_name=#{operator_name},
+        </if>
+        <if test="remove_logo != null and remove_logo != '' ">
+            operator_time=#{operator_time},
+        </if>
+        <if test="status != null and status != '' ">
+            status=#{status},
+        </if>
+        operator_time = NOW()
+        where id=#{id}
+    </update>
+
+    <!--查询信息详情-->
+    <select id="findInfo" resultType="pd" parameterType="String">
+        select * from customer_call_record where id=#{id}
+    </select>
+    <!--删除信息-->
+    <delete id="del" parameterType="String">
+        delete from customer_call_record where id=#{id}
+    </delete>
+    <!--电话信息处理完成-->
+    <update id="acceptedOrder" parameterType="pd">
+        update customer_call_record set
+        <if test="remark != null and remark != '' ">
+            remark=#{remark},
+        </if>
+        <if test="type != null and type != '' ">
+            type=#{type},
+        </if>
+        remove_logo = 'Y',
+        operator_time = NOW()
+        where id=#{id}
+    </update>
+</mapper>

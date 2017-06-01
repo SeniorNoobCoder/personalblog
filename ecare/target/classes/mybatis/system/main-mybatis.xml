@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecare.web.system.main">
+    
+    
+	<!--查询用户拥有的角色信息-->
+    <select id="findRoleList" parameterType="pd" resultType="Integer">
+    	select
+			DISTINCT
+    		a.role_id as "id"
+    		from system_user_role a
+			left join system_role b on a.role_id=b.id and b.remove_logo='N'
+    		where a.user_id=#{user_id}
+    		<if test="role_id != null and role_id != ''"><!-- 用户名检索 -->
+				and a.role_id = #{role_id}
+			</if>
+    </select>
+    
+    
+    
+
+    <select id="findMenuList" parameterType="pd" resultType="pd">
+    	select
+    		a.role_id as "role_id",
+    		a.menu_id as "menu_id",
+    		b.id as "id",
+			b.name as "name",
+			b.parent_id as "parent_id",
+			b.url as "url",
+			b.icon as "icon",
+			b.type as "type",
+			b.level as "level",
+			b.order_by as "order_by",
+			b.remark as "remark",
+			b.remove_logo as "remove_logo",
+			b.create_user as "create_user",
+			b.create_time as "create_time",
+			b.update_time as "update_time"
+		from system_role_menu as a
+		left join system_menu b on a.menu_id=b.id
+    	where b.remove_logo='N' and b.type='menu' and b.level=#{level}
+    	<if test="parent_id != null and parent_id != ''"><!-- 用户名检索 -->
+			and b.parent_id = #{parent_id}
+		</if>
+    	 and a.role_id in
+    	<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        group by b.order_by asc, b.create_time desc
+    </select>
+     
+      <select id="findButtonList" parameterType="pd" resultType="pd">
+    	select
+    		a.role_id as "role_id",
+    		a.menu_id as "menu_id",
+    		b.id as "id",
+			b.name as "name",
+			b.code as "code",
+			b.parent_id as "parent_id",
+			b.url as "url",
+			b.icon as "icon",
+			b.type as "type",
+			b.level as "level",
+			b.order_by as "order_by",
+			b.remark as "remark",
+			b.remove_logo as "remove_logo",
+			b.create_user as "create_user",
+			b.create_time as "create_time",
+			b.update_time as "update_time"
+		from system_role_menu as a
+		left join system_menu b on a.menu_id=b.id
+    	where b.remove_logo='N' and b.type='button' and a.role_id in
+    	<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        group by b.order_by asc, b.create_time desc
+   	 </select>
+   	 
+   	 
+   	 
+   	 
+   	 <select id="findRoleLs" resultType="pd" parameterType="pd">
+    	select
+			a.id as "id",
+			a.name as "name",
+			a.short_name as "short_name",
+			a.type as "type",
+			a.order_by as "order_by",
+			a.remark as "remark",
+			a.remove_logo as "remove_logo",
+			a.create_user as "create_user",
+			a.create_time as "create_time",
+			a.update_time as "update_time"
+		from system_role as a
+		left join system_user_role b on a.id=b.role_id
+		where a.remove_logo ='N' and b.user_id=#{user_id}
+		order by a.order_by asc,a.update_time desc
+    </select>
+  
+    
+</mapper>

@@ -1,0 +1,46 @@
+@charset "utf-8";
+/* CSS Document */
+
+.datetimepicker{    background-color: #fff;
+    border: 1px solid #e3e3e3;
+    position: absolute;
+    top: 150px;
+        left: 180px !important;}
+		.frmb-control li{
+		display: block;
+		}
+		#rendered-form {
+		  clear: both;
+		  display: none;
+		}
+		#rendered-form button {
+		  float: right;
+		}
+
+  #lefttree{width: 70%;float: left; min-height:300px;border: 2px dashed #e3e3e3;background-color: #fff;}
+  #lefttree li{ width:30%; float:left; border:1px solid #e3e3e3;    border-radius: 5px;
+    box-shadow: #e3e3e3 3px 3px 3px; height:60px; margin:1%; text-align:center;}
+  #lefttree li span{ padding:5px;}
+.info{position: absolute;top: 110px;left: 540px;}
+.ztree{overflow:auto; float: left;width: 28%;background-color: #fff; margin-left: 10px;border: 2px dashed #e3e3e3;}
+
+.clear{ clear:both;}
+#flow{margin-bottom:10px; margin-top:10px;}
+#flow{ width:510px; margin:0 auto;}
+.processor_bar li{
+	float:left;
+	background:url(img/bg_processor.png) no-repeat;
+	width:254px; height:40px;
+	line-height:40px;
+	color:#333;
+   
+}
+.processor_bar .next{ margin-left:-20px;}
+.processor_bar .current{ background:url(img/bg_processor1.png) no-repeat; color:#fff;}
+.processor_bar .next1{ background:url(img/bg_processor2.png) no-repeat;}
+.processor_bar .current1{ background:url(img/bg_processor3.png) no-repeat; color:#fff; margin-left:-20px;}
+
+.treedel{background:url(img/del.png) no-repeat; width:20px; height:15px;    margin-left: 130px;
+    margin-top: 5px; cursor:pointer;}
+    
+.pull-right{    text-align: left;}

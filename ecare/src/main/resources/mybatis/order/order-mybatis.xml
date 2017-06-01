@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecare.web.order.order">
+    <!--查询信息列表-->
+    <select id="findListPage" resultType="pd" parameterType="page">
+        SELECT * FROM customer_order
+        where 1=1
+        <if test="pd.remove_logo != null and pd.remove_logo != ''"><!-- 状态检索 -->
+            and remove_logo=#{pd.remove_logo}
+        </if>
+        <if test="pd.status != null and pd.status != ''">
+            and status=#{pd.status}
+        </if>
+        <if test="pd.order_no != null and pd.order_no != ''"><!-- 用户名检索 -->
+            and order_no=#{pd.order_no}
+        </if>
+        <if test="pd.order_source != null and pd.order_source != ''"><!-- 状态检索 -->
+            and order_source=#{pd.order_source}
+        </if>
+        <if test="pd.pay_type != null and pd.pay_type != ''"><!-- 状态检索 -->
+            and pay_type=#{pd.pay_type}
+        </if>
+        <if test="pd.customer_sn != null and pd.customer_sn != ''"><!-- 状态检索 -->
+            and customer_sn=#{pd.customer_sn}
+        </if>
+        <if test="pd.create_user != null and pd.create_user != ''"><!-- 状态检索 -->
+            and create_user=#{pd.create_user}
+        </if>
+        <if test="pd.warning != null and pd.warning != ''"><!-- 超时预警 -->
+            and warning=#{pd.warning}
+        </if>
+        <!--<if test="pd.create_time != null and pd.create_time != ''">&lt;!&ndash; 状态检索 &ndash;&gt;-->
+            <!--and DATE_FORMAT(create_time,'%Y-%m-%d') = #{pd.create_time}-->
+        <!--</if>-->
+        <if test="pd.start_time != null and pd.start_time != ''and pd.end_time != null and pd.end_time != ''">
+            and DATE_FORMAT(create_time,'%Y-%m-%d') BETWEEN #{pd.start_time} AND #{pd.end_time}
+        </if>
+        order by create_time desc
+    </select>
+    <!--保存信息-->
+    <insert id="saveOrderByTelemarketer" parameterType="pd">
+        insert into customer_order (
+        order_no,
+        order_source,
+        server_category_id,
+        server_category_name,
+        appointment_time,
+        customer_sn,
+        customer_id,
+        customer_phone,
+        customer_name,
+        customer_address,
+        remark,
+        create_time,
+        update_time,
+        create_user,
+        others_server,
+        status,
+        remove_logo)
+        values (
+        #{order_no},
+        #{order_source},
+        #{server_category_id},
+        #{server_category_name},
+        #{appointment_time},
+        #{customer_sn},
+        #{customer_id},
+        #{customer_phone},
+        #{customer_name},
+        #{customer_address},
+        #{remark},
+        NOW(),
+        NOW(),
+        #{create_user},
+        #{others_server},
+        #{status},
+        #{remove_logo})
+    </insert>
+
+    <!--更新信息-->
+    <update id="updateStatus" parameterType="pd">
+        update customer_order set
+        <if test="remove_logo != null and remove_logo != '' ">
+            remove_logo=#{remove_logo},
+        </if>
+        status=#{status}
+        where id=#{id}
+    </update>
+    <!--更新倒计时警告信息-->
+    <update id="updateWarning" parameterType="pd">
+        UPDATE customer_order
+        SET warning = 'Y'
+        WHERE status = 1 AND remove_logo = 'N' AND warning ='N'
+        <![CDATA[
+        AND appointment_time < #{warningTime}
+        ]]>
+    </update>
+    <!--订单超时关闭信息-->
+    <update id="updateTimeoutOrder" parameterType="pd">
+        UPDATE customer_order
+        SET status = '-1'
+        WHERE status = "1" AND remove_logo = 'N'
+        <![CDATA[
+        AND appointment_time < #{timeoutTime}
+        ]]>
+    </update>
+    <!--评价更新信息-->
+    <update id="updateStatusByOrderNo" parameterType="pd">
+        update customer_order set
+        status=#{status}
+        where order_no=#{order_no}
+    </update>
+    <!--查询信息详情-->
+    <select id="findInfo" resultType="pd" parameterType="pd">
+        SELECT
+        a.order_no,
+        a.id,
+        a.order_source,
+        a.server_category_id,
+        a.server_category_name,
+        a.appointment_time,
+        a.server_info_id,
+        a.customer_id,
+        a.customer_sn,
+        a.customer_phone,
+        a.customer_name,
+        a.customer_address,
+        a.remark,
+        a.create_time,
+        a.create_user,
+        a.amount,
+        a.server_user_id,
+        a.pay_type,
+        a.others_server,
+        a.`status`,
+        a.remove_logo,
+        a.receiving,
+        a.update_time,
+        b.phone AS serverPhone,
+        c.authent_name AS serverName,
+        d.address AS companyAddress,
+        d.phone AS companyPhone,
+        f.authent_name AS companyName
+        FROM
+        customer_order a
+        LEFT JOIN app_users b ON a.server_user_id = b.id
+        LEFT JOIN app_users_authent c ON b.id = c.business_id
+        LEFT JOIN partner_user d ON d.id = c.partner_id
+        LEFT JOIN partner_user_authent f ON d.id = f.partner_id
+        WHERE 1=1
+        <if test="id != null and id != '' ">
+            and a.id=#{id}
+        </if>
+        <if test="customer_sn != null and customer_sn != '' ">
+            and a.customer_sn=#{customer_sn}
+        </if>
+        <if test="order_no != null and order_no != '' ">
+            and a.order_no=#{order_no}
+        </if>
+        <if test="status != null and status != '' ">
+            and a.status=#{status}
+        </if>
+        <if test="remove_logo != null and remove_logo != '' ">
+            and a.remove_logo=#{remove_logo}
+        </if>
+    </select>
+    <!--删除信息-->
+    <delete id="del" parameterType="String">
+        delete from customer_order where id=#{id}
+    </delete>
+    <select id="findNum" parameterType="pd" resultType="Integer">
+       SELECT
+            COUNT(0) AS num
+        FROM
+            customer_order a
+        WHERE 1=1
+        <if test="remove_logo != null and remove_logo != '' ">
+            AND a.remove_logo=#{remove_logo}
+        </if>
+        <if test="create_user != null and create_user != '' ">
+            AND a.create_user=#{create_user}
+        </if>
+        <if test="create_time != null and create_time != '' ">
+            AND a.create_time LIKE  #{create_time}"%"
+        </if>
+        <!--<if test="status != null and status != '' ">-->
+            <!--AND a.status=#{status}-->
+        <!--</if>-->
+    </select>
+</mapper>

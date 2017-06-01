@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecare.app.server.personal">
+	
+	<!-- 忘记密码 -->
+	<update id="update" parameterType="pd">
+		update app_users set
+			<if test="login_password != null and login_password != '' ">
+				login_password=#{login_password}
+			</if>
+    	where login_name=#{login_name}	
+	</update>
+	
+		<!-- 修改密码 、个人信息、个人开工状态 -->
+	<update id="updateStatus" parameterType="pd">
+		update app_users set
+			<if test="login_password != null and login_password != '' ">
+				login_password=#{login_password},
+			</if>
+			<if test="sex != null and sex != '' ">
+				sex=#{sex},
+			</if>
+			<if test="nickname != null and nickname != '' ">
+				nickname=#{nickname},
+			</if>
+			<if test="live_address != null and live_address != '' ">
+				live_address=#{live_address},
+			</if>
+				<if test="head_address != null and head_address != '' ">
+				head_address=#{head_address},
+			</if>
+			<if test="is_work != null and is_work != '' ">
+				is_work=#{is_work},
+			</if>
+			update_time=NOW()
+    	where id=#{id}	
+	</update>
+	
+		<!-- 根据商家认证号进行查找 -->
+		<select id="findPartnerInfo" parameterType="pd" resultType="pd"> 
+			select
+				a.id as "id",
+				b.authent_name as "user_name",
+				a.code as "code",
+				a.phone as "phone",
+				a.address as "address"
+			from partner_user a
+			 left join partner_user_authent b on a.id=b.partner_id
+				where a.status='Y' and a.remove_logo='N' 
+				<if test="code != null and code != '' ">
+				and a.code=#{code}
+				</if>
+			
+		</select>
+		<!-- 查询所有的信息（认证） -->
+		<select id="authentInfo" parameterType="pd" resultType="pd"> 
+			SELECT
+				b.idCard_front,
+				b.idCard_back,
+				a.phone,
+				b.step,
+				b.business_id,
+				d.partner_id,
+				b.PID,
+				a.isAuthent,
+				b.authent_name,
+				c.`code` AS companyCode,
+				c.address AS companyAddress,
+				c.phone AS companyPhone,
+				d.authent_name AS companyName
+			FROM
+				app_users a
+			LEFT JOIN app_users_authent b ON a.id = b.business_id
+			LEFT JOIN partner_user c ON b.partner_code = c.`code`
+			LEFT JOIN partner_user_authent d ON c.id = d.partner_id
+			WHERE
+				a.status='1' and a.remove_logo = 'N'
+				<if test="session_id != null and session_id != '' ">
+				and a.session_id=#{session_id}
+				</if>
+		</select>
+	
+	<!-- 查询所有的信息（认证） -->
+		<select id="findAllInfo" parameterType="pd" resultType="pd"> 
+			select
+				a.id as "id",
+				c.authent_name as "authent_name",
+				a.code as "code",
+ 				a.phone as "phone",
+				a.user_name as "user_name",
+				a.address as "address",
+				c.business_id as "business_id",
+				c.partner_id as "partner_id",
+				c.partner_code as "partner_code",
+				c.authent_name as "authent_name",
+				c.PID as "PID",
+				c.idCard_front as "idCard_front",
+				c.idCard_back as "idCard_back",
+				c.step as "step"
+			from partner_user a
+			 left join partner_user_authent b on a.id=b.partner_id
+			 left join app_users_authent c on c.partner_code=a.code
+				where a.remove_logo='N' 
+				<if test="code != null and code != '' ">
+				and a.code=#{code}
+				</if>
+					<if test="business_id != null and business_id != '' ">
+				and c.business_id=#{business_id}
+				</if>
+			
+		</select>
+	
+	
+	<!-- 修改商户认证信息 -->
+	<update id="updateUser" parameterType="pd">
+		update app_users_authent set
+			<if test="authent_name != null and authent_name != '' ">
+				authent_name=#{authent_name},
+			</if>
+			<if test="PID != null and PID != '' ">
+				PID=#{PID},
+			</if>
+			<if test="idCard_front != null and idCard_front != '' ">
+				idCard_front=#{idCard_front},
+			</if>
+				<if test="idCard_back != null and idCard_back != '' ">
+				idCard_back=#{idCard_back},
+			</if>
+			<if test="partner_code != null and partner_code != '' ">
+				partner_code=#{partner_code},
+			</if>
+			<if test="partner_id != null and partner_id != '' ">
+				partner_id=#{partner_id},
+			</if>
+			<if test="step != null and step != '' ">
+				step=#{step},
+			</if>
+		update_time=NOW()
+    	where business_id=#{business_id}	
+	</update>
+	
+	<!-- 查询商户认证信息 -->
+	<select id="findUserInfo" parameterType="pd" resultType="pd">
+		SELECT
+			a.id as "id",
+			a.business_id as "business_id",
+			a.partner_id as "partner_id",
+			a.partner_code as "partner_code",
+			a.authent_name as "authent_name",
+			a.PID as "PID",
+			a.idCard_front as "idCard_front",
+			a.idCard_back as "idCard_back",
+			a.step as "step"
+		FROM
+			app_users_authent a
+			where 1=1 
+			<if test="business_id != null and business_id != '' ">
+				and a.business_id=#{business_id}
+			</if>
+	</select>
+	
+	<!-- 查询累计的收入 -->
+	<select id="findAmountSum" parameterType="pd" resultType="Double">
+		SELECT
+			sum(amount)
+		FROM
+			customer_order  a
+			where a.server_user_id=#{server_user_id}
+			and a.status in (6,5)
+	</select>
+	
+	<!-- 查询当天的已付款\待付款的收入 -->
+	<select id="findDateNum" parameterType="pd" resultType="Double">
+		SELECT
+			sum(amount)
+		FROM
+			customer_order a
+		WHERE
+			to_days(update_time) = to_days(now())
+		and a.server_user_id=#{server_user_id}
+		<if test="status != null and status != '' and status != '-1' ">
+				and a.status =#{status}
+		</if>
+		<if test="statusTwo != null and statusTwo != ''">
+				and (a.status = #{statusTwo} OR a.status = #{statusThree})
+		</if>
+		
+	</select>
+	
+	<!-- 根据时间进行分组 -->
+	<select id="findTimeList" resultType="pd" parameterType="pd" >
+		SELECT DATE_FORMAT(a.update_time,'%Y-%m') AS monthName FROM customer_order a
+			where a.server_user_id=#{server_user_id} and a.status in(5,6)
+			<if test="update_time != null and update_time != '' ">
+			and a.update_time like concat( #{update_time},'%')
+		</if>
+		GROUP BY DATE_FORMAT(a.update_time,'%Y-%m')
+		ORDER BY monthName DESC
+			<if test="endPage != null and endPage != ''">
+	   			limit #{startPage},#{endPage}
+   			</if>
+	
+	</select>
+	
+	<!-- 根据日期分页 -->
+	<select id="findDateNums" resultType="Integer" parameterType="pd">
+		SELECT count(*) FROM customer_order a
+				where a.server_user_id=#{server_user_id} and a.status in(5,6)
+			<if test="update_time != null and update_time != '' ">
+			and a.update_time like concat( #{update_time},'%')
+		</if>
+		GROUP BY DATE_FORMAT(a.update_time,'%Y-%m')
+	
+	</select>
+	
+	
+	<!-- 查询消费记录 -->
+	<select id="findConsumeList" resultType="pd" parameterType="pd">
+	 SELECT
+		DATE_FORMAT(a.update_time,'%Y-%m') as monthName,
+		DATE_FORMAT(a.update_time,'%d') as dateName,
+		DATE_FORMAT(a.update_time,'%H:%m') as timeName,
+		a.server_category_name AS server_category_name,
+		a.id AS id,
+		a.amount AS amount
+	from
+		customer_order a
+		where a.server_user_id=#{server_user_id} and a.status in(5,6)
+		<if test="update_time != null and update_time != '' ">
+			and a.update_time like concat( #{update_time},'%')
+		</if>
+	</select>
+	
+	<!-- 根据时间进行分组 -->
+	<select id="findNumList" resultType="pd" parameterType="pd">
+		SELECT
+			DATE_FORMAT(a.update_time, '%Y-%m-%d') AS group_time,
+			count(0) AS num
+		FROM
+			customer_order a
+		WHERE
+			1 = 1
+		AND a.server_user_id = #{server_user_id} 
+		AND a. STATUS IN (4, 5, 6)
+		AND a.remove_logo = 'N'
+		AND a.update_time BETWEEN #{startDay} and #{searchDay}
+		GROUP BY group_time
+	</select>
+	
+</mapper>

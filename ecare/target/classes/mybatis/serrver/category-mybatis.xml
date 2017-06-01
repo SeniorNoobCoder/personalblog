@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecare.web.server.category">
+    <!-- 查询分页 -->
+    <select id="findListPage" resultType="pd" parameterType="page">
+        SELECT  * FROM
+        server_category
+        WHERE 1=1
+        <if test="pd.remove_logo != null and pd.remove_logo != '' ">
+            AND remove_logo = #{pd.remove_logo}
+        </if>
+        <if test="pd.parent_id != null and pd.parent_id != '' ">
+            AND parent_id = #{pd.parent_id}
+        </if>
+        <if test="pd.type != null and pd.type != '' ">
+            AND type = #{pd.type}
+        </if>
+        ORDER BY order_by
+    </select>
+    <!--  查询无分页 -->
+    <select id="findList" parameterType="pd" resultType="pd">
+        SELECT  * FROM server_category
+        WHERE 1=1
+        <if test="remove_logo != null and remove_logo != '' ">
+            AND remove_logo = #{remove_logo}
+        </if>
+        <if test="parent_id != null and parent_id != '' ">
+            AND parent_id = #{parent_id}
+        </if>
+        <if test="type != null and type != '' ">
+            AND type = #{type}
+        </if>
+        ORDER BY order_by
+    </select>
+    <!--查询信息详情-->
+    <select id="findInfo" resultType="pd" parameterType="pd">
+        SELECT * FROM server_category WHERE id =#{id}
+    </select>
+
+    <!--保存信息-->
+    <insert id="save" parameterType="pd">
+        insert into server_category (
+        name,
+        parent_id,
+        image,
+        url,
+        remark,
+        create_time,
+        order_by,
+        create_user,
+        show_app,
+        level,
+        type)
+        values (
+        #{name},
+        #{parent_id},
+        #{image},
+        #{url},
+        #{remark},
+        NOW(),
+        #{order_by},
+        #{create_user},
+        #{show_app},
+        #{level},
+        #{type})
+    </insert>
+
+
+    <!--更新信息-->
+    <update id="update" parameterType="pd">
+        update server_category set
+        <if test="name != null and name != '' ">
+            name=#{name},
+        </if>
+        <if test="image != null and image != '' ">
+            image=#{image},
+        </if>
+        <if test="url != null and url != '' ">
+            url=#{url},
+        </if>
+        <if test="remark != null and remark != '' ">
+            remark=#{remark},
+        </if>
+        <if test="order_by != null and order_by != '' ">
+            order_by=#{order_by},
+        </if>
+        <if test="show_app != null and show_app != '' ">
+            show_app=#{show_app},
+        </if>
+        <if test="remove_logo != null and remove_logo != '' ">
+            remove_logo=#{remove_logo},
+        </if>
+        update_time= NOW()
+        where id=#{id}
+    </update>
+
+    <!--删除信息-->
+    <delete id="delete" parameterType="String">
+        delete from server_category where id=#{id}
+    </delete>
+    <!--查询条数-->
+    <select id="findListNum" parameterType="pd" resultType="Integer">
+        select count(*) from server_category
+        where 1=1
+        <if test="remove_logo != null and remove_logo != ''">
+            and remove_logo =#{remove_logo}
+        </if>
+        <if test="type != null and type != ''">
+            and type =#{type}
+        </if>
+    </select>
+</mapper>

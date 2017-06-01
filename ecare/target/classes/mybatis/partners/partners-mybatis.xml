@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecare.web.partners.partners">
+
+    <!--查询信息列表-->
+    <select id="findListPage" resultType="pd" parameterType="page">
+		SELECT
+		a.id,
+		a.login_name,
+		a.login_password,
+		a.`code`,
+		a.user_name,
+		a.`status`,
+		a.is_authent,
+		a.phone,
+		a.email,
+		a.head_address,
+		a.session_id,
+		a.type,
+		a.write_type,
+		a.order_by,
+		a.remark,
+		a.remove_logo,
+		a.create_user,
+		a.create_time,
+		a.update_time,
+		a.address,
+		a.province,
+		a.city,
+		a.county,
+		a.street,
+		a.business_license,
+		b.authent_name
+		FROM
+		partner_user a
+		LEFT JOIN partner_user_authent b ON a.id = b.partner_id
+		where 1=1
+		<if test="pd.remove_logo != null and pd.remove_logo != ''"><!-- 状态检索 -->
+            and a.remove_logo=#{pd.remove_logo}
+        </if>
+        <if test="pd.login_name != null and pd.login_name != ''"><!-- 登录名称检索 -->
+            and a.login_name like concat('%', #{pd.login_name},'%')
+        </if>
+        <if test="pd.user_name != null and pd.user_name != ''"><!-- 用户名检索 -->
+            and a.user_name like concat('%', #{pd.user_name},'%')
+        </if>
+        <if test="pd.status != null and pd.status != ''"><!-- 状态检索 -->
+            and a.status=#{pd.status}
+        </if>
+        <if test="pd.type != null and pd.type != ''"><!-- 类型检索 -->
+            and a.type=#{pd.type}
+        </if>
+        order by a.order_by asc, a.create_time desc
+    </select>
+	<select id="findList" resultType="pd" parameterType="pd">
+		SELECT id
+		FROM partner_user
+		WHERE remove_logo = 'N' AND `status` = 'Y' AND is_authent = 'Y'
+	</select>
+    
+    <!--查询信息详情-->
+    <select id="findInfo" resultType="pd" parameterType="pd">
+		SELECT
+			a.id,
+			a.login_name,
+			a.login_password,
+			a.`code`,
+			a.code_image,
+			a.user_name,
+			a.`status`,
+			a.is_authent,
+			a.phone,
+			a.email,
+			a.head_address,
+			a.session_id,
+			a.type,
+			a.write_type,
+			a.order_by,
+			a.remark,
+			a.remove_logo,
+			a.create_user,
+			a.create_time,
+			a.update_time,
+			a.address,
+			a.province,
+			a.city,
+			a.county,
+			a.street,
+			a.business_license,
+			b.type,
+			b.authent_type,
+			b.authent_code,
+			b.authent_name,
+			b.authent_photo1,
+			b.authent_photo2,
+			b.authent_photo3,
+			b.admin_name,
+			b.admin_code,
+			b.admin_phone,
+			b.admin_photo,
+			b.remark
+		from partner_user a
+		LEFT JOIN partner_user_authent b
+		ON a.id = b.partner_id
+		where 1=1
+		<if test="id != null and id != '' ">
+            and a.id=#{id}
+        </if>
+        <if test="login_name != null and login_name != '' ">
+            and a.login_name=#{login_name}
+        </if>
+    </select>
+    
+
+    <!--保存信息-->
+    <insert id="save" parameterType="pd">
+        insert into partner_user (
+        	code,
+			code_image,
+	        login_name,
+	        login_password,
+	        user_name,
+	        status,
+	        is_authent,
+	        phone,
+	        email,
+	        head_address,
+	        remark,
+	        remove_logo,
+	        create_user,
+	        create_time,
+	        update_time)
+	        values (
+	        #{code},
+			#{code_image},
+	        #{login_name},
+	        #{login_password},
+	        #{user_name},
+	        #{status},
+	        #{is_authent},
+	        #{phone},
+	        #{email},
+	        #{head_address},
+	        #{remark},
+	        #{remove_logo},
+	        #{create_user},
+	       	NOW(),
+			NOW())
+	        <selectKey keyProperty="id" resultType="int" order="AFTER">
+				select LAST_INSERT_ID() 
+			</selectKey>
+    </insert>
+
+
+    <!--更新信息-->
+    <update id="update" parameterType="pd">
+        update partner_user set
+        <if test="login_name != null and login_name != '' ">
+            login_name=#{login_name},
+        </if>
+        <if test="login_password != null and login_password != '' ">
+            login_password=#{login_password},
+        </if>
+        <if test="user_name != null and user_name != '' ">
+            user_name=#{user_name},
+        </if>
+        <if test="status != null and status != '' ">
+            status=#{status},
+        </if>
+        <if test="is_authent != null and is_authent != '' ">
+            is_authent=#{is_authent},
+        </if>
+        <if test="phone != null and phone != '' ">
+            phone=#{phone},
+        </if>
+        <if test="email != null and email != '' ">
+            email=#{email},
+        </if>
+        <if test="head_address != null and head_address != '' ">
+            head_address=#{head_address},
+        </if>
+        <if test="area_id != null and area_id != '' ">
+            area_id=#{area_id},
+        </if>
+        <if test="session_id != null and session_id != '' ">
+            session_id=#{session_id},
+        </if>
+        <if test="type != null and type != '' ">
+            type=#{type},
+        </if>
+        <if test="order_by != null and order_by != '' ">
+            order_by=#{order_by},
+        </if>
+        <if test="remark != null and remark != '' ">
+            remark=#{remark},
+        </if>
+        <if test="remove_logo != null and remove_logo != '' ">
+            remove_logo=#{remove_logo},
+        </if>
+        update_time=#{create_time}
+        where id=#{id}
+    </update>
+
+
+	<!--查询已删除信息数量-->
+    <select id="findDelNum" parameterType="pd" resultType="Integer">
+    	select count(*) from partner_user where remove_logo='Y' 
+    </select>
+
+	<!--查询已删除用户ids-->
+    <select id="findListIds" parameterType="pd" resultType="Integer">
+    	select 
+    		a.id as "id"
+    	 from partner_user a
+    	 where a.remove_logo='Y'
+    </select>
+    
+    <!--删除信息-->
+    <delete id="delete" parameterType="String">
+    	delete from partner_user where id=#{id}
+    </delete>
+    
+	<!--删除认证信息-->
+    <delete id="deleteAuthent" parameterType="String">
+    	delete from partner_user_authent where partner_id=#{id}
+    </delete>
+
+
+    <!--删除信息-->
+    <delete id="delServerCategory" parameterType="String">
+        delete from partner_user_server_category where partner_userId=#{user_id}
+    </delete>
+    <!--查询服务分类-->
+    <select id="findServerCategory" resultType="pd" parameterType="pd">
+		SELECT
+		a.id AS "id",
+		a. NAME AS "name",
+		a.parent_id AS "pId",
+		IF (b.id IS NULL, "false", "true") AS "checked"
+		FROM
+		server_category a
+		LEFT JOIN partner_user_server_category b ON a.id = b.category_id
+		AND b.partner_userId = #{partner_userId}
+		WHERE 1 = 1
+        <if test="remove_logo != null and remove_logo != ''">
+            and a.remove_logo =#{remove_logo}
+        </if>
+		<if test="type != null and type != ''">
+			and a.type =#{type}
+		</if>
+        order by a.order_by asc,a.create_time desc
+    </select>
+    <!--保存服务分类信息-->
+    <insert id="saveServerCategory" parameterType="pd">
+        insert into partner_user_server_category (
+        category_id,
+        category_name,
+        category_code,
+        partner_userId,
+        create_user,
+        create_time)
+        values (
+        #{category_id},
+        #{category_name},
+         #{category_code},
+          #{partner_userId},
+        #{create_user},
+        NOW())
+    </insert>
+    
+    
+    
+	<select id="findAuthentInfo" parameterType="pd" resultType="pd">
+		select
+			a.id as "id",
+			a.partner_id as "partner_id",
+			a.type as "type",
+			a.authent_type as "authent_type",
+			a.authent_code as "authent_code",
+			a.authent_name as "authent_name",
+			a.authent_photo1 as "authent_photo1",
+			a.authent_photo2 as "authent_photo2",
+			a.authent_photo3 as "authent_photo3",
+			a.admin_name as "admin_name",
+			a.admin_code as "admin_code",
+			a.admin_phone as "admin_phone",
+			a.admin_photo as "admin_photo",
+			a.remark as "remark",
+			a.create_user as "create_user",
+			a.create_time as "create_time",
+			a.update_time as "update_time"
+			from partner_user_authent a
+			where a.partner_id=#{partner_id}
+	</select>
+    
+    
+    <insert id="saveAuthent" parameterType="pd">
+    	insert into partner_user_authent (
+    		partner_id,
+    		type,
+    		authent_type,
+    		authent_code,
+    		authent_name,
+    		authent_photo1,
+    		authent_photo2,
+    		authent_photo3,
+    		admin_name,
+    		admin_code,
+    		admin_phone,
+    		admin_photo,
+    		remark,
+    		create_user,
+    		create_time,
+    		update_time)
+    		values
+    		(#{partner_id},
+    		#{type},
+    		#{authent_type},
+    		#{authent_code},
+    		#{authent_name},
+    		#{authent_photo1},
+    		#{authent_photo2},
+    		#{authent_photo3},
+    		#{admin_name},
+    		#{admin_code},
+    		#{admin_phone},
+    		#{admin_photo},
+    		#{remark},
+    		#{create_user},
+    		#{create_time},
+    		#{update_time})
+    </insert>
+    
+
+	<update id="updateAuthent" parameterType="pd">
+		update partner_user_authent set
+			<if test="type != null and type != '' ">
+	            type=#{type},
+	        </if>
+	        <if test="authent_type != null and authent_type != '' ">
+	            authent_type=#{authent_type},
+	        </if>
+	        <if test="authent_code != null and authent_code != '' ">
+	            authent_code=#{authent_code},
+	        </if>
+	        <if test="authent_name != null and authent_name != '' ">
+	            authent_name=#{authent_name},
+	        </if>
+	        <if test="authent_photo1 != null and authent_photo1 != '' ">
+	            authent_photo1=#{authent_photo1},
+	        </if>
+	        <if test="authent_photo2 != null and authent_photo2 != '' ">
+	            authent_photo2=#{authent_photo2},
+	        </if>
+	        <if test="authent_photo3 != null and authent_photo3 != '' ">
+	            authent_photo3=#{authent_photo3},
+	        </if>
+	        <if test="admin_name != null and admin_name != '' ">
+	            admin_name=#{admin_name},
+	        </if>
+	        <if test="admin_code != null and admin_code != '' ">
+	            admin_code=#{admin_code},
+	        </if>
+	        <if test="admin_phone != null and admin_phone != '' ">
+	            admin_phone=#{admin_phone},
+	        </if>
+	        <if test="admin_photo != null and admin_photo != '' ">
+	            admin_photo=#{admin_photo},
+	        </if>
+	        <if test="remark != null and remark != '' ">
+	            remark=#{remark},
+	        </if>
+	        <if test="create_user != null and create_user != '' ">
+	            create_user=#{create_user},
+	        </if>
+	        update_time=#{update_time}
+	        where id=#{id}
+	</update>
+
+
+	<select id="findNum" parameterType="pd" resultType="Integer">
+		SELECT
+		COUNT(0) AS num
+		FROM
+		partner_user a
+		WHERE 1=1
+		<if test="remove_logo != null and remove_logo != '' ">
+			AND a.remove_logo=#{remove_logo}
+		</if>
+	</select>
+    
+</mapper>

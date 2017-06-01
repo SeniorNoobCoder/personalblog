@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecare.app.server.appmine">
+	
+	<!-- 查询关系 -->
+	<select id="findRelationshipList"  parameterType="pd" resultType="pd">
+		SELECT
+			a.name
+			FROM
+			system_dictionary a
+		where a.remove_logo="N" and a.parent_id='389'
+		
+	</select>
+	
+	<!-- 查询设备是否存在 -->
+	<select id="findDeviceNum" resultType="Integer" parameterType="pd">
+		SELECT
+		count(*)
+		FROM
+			customer_device a
+		where a.remove_logo='N' and a.status="Y" 
+		<if test="sn != null and sn != ''">
+			and a.sn = #{sn}
+		</if>
+	</select>
+	
+	<!-- 查询设备信息 -->
+	<select id="findDeviceInfo" resultType="pd" parameterType="pd">
+		SELECT
+		a.id as "id",
+		a.sn as "sn"
+		FROM
+			customer_device a
+		where a.remove_logo='N' and a.status="Y" 
+		<if test="sn != null and sn != ''">
+			and a.sn = #{sn}
+		</if>
+	</select>
+	
+	<!-- 绑定设备 -->
+	<insert id="saveRelation" parameterType="pd">
+		insert into customer_family_device (
+        family_id,
+        device_id,
+        sn,
+        create_time,
+        relationship)
+        values (
+        #{family_id},
+        #{device_id},
+        #{sn},
+       	NOW(),
+       	#{relationship})
+	</insert>
+	
+		<!-- 修改设备信息 -->
+	<update id="updateDevice" parameterType="pd">
+		update customer_device set
+			<if test="app_id != null and app_id != '' ">
+				app_id=#{app_id},
+			</if>
+			update_time=NOW()
+    		where sn=#{sn}
+	
+	</update>
+	
+	<!-- 查询设备号是否已经绑定 -->
+	<select id="findRepeatInfo" resultType="Integer" parameterType="pd">
+		SELECT
+			count(*)
+		FROM
+			customer_family_device a
+		where a.sn=#{sn} and a.family_id=#{family_id}
+	</select>
+	
+	<!-- 家庭成员信息 -->
+	<select id="findFamilyList" resultType="pd" parameterType="pd">
+		SELECT
+			a.id as "id",
+			a.family_id as "family_id",
+			a.device_id as "device_id",
+			a.sn as "sn",
+			b.island_name as "island_name",
+			a.relationship as "relationship",
+			b.name as "name",
+			b.head_address as "head_address",
+			b.phone as "phone"
+		FROM
+			customer_family_device a
+		LEFT JOIN customer_user b ON a.sn = b.sn
+			where a.family_id=#{family_id}
+	</select>
+	
+	<!-- 根据时间进行分组 -->
+	<select id="findTimeList" resultType="pd" parameterType="pd" >
+		SELECT DATE_FORMAT(a.update_time,'%Y-%m') AS monthName FROM customer_order a
+			LEFT JOIN customer_family_device b on a.customer_sn=b.sn
+		LEFT JOIN app_users c on c.id=a.server_user_id
+		LEFT JOIN app_users_authent d on d.business_id= c.id
+			where b.family_id=#{family_id} and a.status in(5,6)
+			<if test="update_time != null and update_time != '' ">
+			and a.update_time like concat( #{update_time},'%')
+		</if>
+		GROUP BY DATE_FORMAT(a.update_time,'%Y-%m')
+		ORDER BY monthName DESC
+			<if test="endPage != null and endPage != ''">
+	   			limit #{startPage},#{endPage}
+   			</if>
+	
+	</select>
+	
+	<!-- 根据日期分页 -->
+	<select id="findDateNum" resultType="Integer" parameterType="pd">
+		SELECT count(*) FROM customer_order a
+				LEFT JOIN customer_family_device b on a.customer_sn=b.sn
+		LEFT JOIN app_users c on c.id=a.server_user_id
+		LEFT JOIN app_users_authent d on d.business_id= c.id
+			where b.family_id=#{family_id} and a.status in(5,6)
+			<if test="update_time != null and update_time != '' ">
+			and a.update_time like concat( #{update_time},'%')
+		</if>
+		GROUP BY DATE_FORMAT(a.update_time,'%Y-%m')
+	
+	</select>
+	
+	
+	<!-- 查询消费记录 -->
+	<select id="findConsumeList" resultType="pd" parameterType="pd">
+	 SELECT
+		DATE_FORMAT(a.update_time,'%Y-%m') as monthName,
+		DATE_FORMAT(a.update_time,'%d') as dateName,
+		DATE_FORMAT(a.update_time,'%H:%m') as timeName,
+		a.server_category_name AS server_category_name,
+		a.id AS id,
+		a.amount AS amount,
+		d.authent_name AS companyName
+		FROM
+		customer_order a
+		LEFT JOIN customer_family_device b on a.customer_sn=b.sn
+		LEFT JOIN app_users_authent c on c.business_id=a.server_user_id
+		LEFT JOIN partner_user_authent d on c.partner_id = d.partner_id
+		where b.family_id=#{family_id} and a.status in(5,6)
+		<if test="update_time != null and update_time != '' ">
+			and a.update_time like concat( #{update_time},'%')
+		</if>
+		ORDER BY a.update_time desc
+	</select>
+	
+	<!-- 收藏 -->
+	<insert id="saveCollect" parameterType="pd">
+		insert into customer_server_collect (
+        server_info_id,
+        user_id,
+        create_time)
+        values (
+        #{server_info_id},
+        #{user_id},
+       	NOW())
+	
+	</insert>
+	
+	<!-- 收藏列表 -->
+	<select id="findCollectList"  resultType="pd" parameterType="pd">
+			SELECT
+			a.id AS id,
+			a.title AS title,
+			a.content AS content,
+			a.server_category_name AS server_category_name,
+			p.head_address AS head_address,
+			p.is_authent AS is_authent,
+			d.authent_name AS companyName,
+			p.address AS companyAddress,
+			b.start_price AS start_price,
+			p.phone AS companyPhone
+		FROM
+		server_info a
+		LEFT JOIN server_category b ON a.server_category_id = b.id
+		LEFT JOIN partner_user p ON a.partner_id = p.id
+		LEFT JOIN customer_server_collect e on a.id=e.server_info_id
+		LEFT JOIN partner_user_authent d ON p.id = d.partner_id
+		WHERE a.remove_logo="N" and a.status="2" and  e.user_id=#{user_id}
+			<if test="endPage != null and endPage != ''">
+	   			limit #{startPage},#{endPage}
+   			</if>
+	</select>
+	
+		<!-- 收藏数量 -->
+		<select id="findCollectNum"  resultType="Integer" parameterType="pd">
+			SELECT
+				count(*)
+			FROM
+				server_info a
+				LEFT JOIN server_category b ON a.server_category_id = b.id
+				LEFT JOIN partner_user p ON a.partner_id = p.id
+				LEFT JOIN customer_server_collect e on a.id=e.server_info_id
+				LEFT JOIN partner_user_authent d ON p.id = d.partner_id
+				WHERE a.remove_logo="N" and a.status="2" and  e.user_id=#{user_id}
+	</select>
+	
+	<!-- 取消收藏 -->
+	<delete id="delete" parameterType="pd">
+		delete  from customer_server_collect
+		where server_info_id=#{server_info_id} and user_id=#{user_id}
+	</delete>
+	
+	<!-- 解绑设备号 -->
+		<delete id="deleteDevice" parameterType="pd">
+		delete  from customer_family_device
+		where id=#{id} 
+	</delete>
+	
+	
+	<!-- 查询服务质量个数 -->
+	<select id="findStartNum" resultType="Integer" parameterType="pd">
+		SELECT
+			count(*)
+		FROM
+			customer_order_assessment a
+			LEFT JOIN customer_order b on a.order_no=b.order_no
+			where b.server_user_id=#{server_user_id}
+			and a.service_quality=#{service_quality}
+	</select>
+	
+	<!-- 查询用户评价 -->
+	<select id="findEvaluateList" resultType="pd" parameterType="pd">
+		SELECT
+			a.id,
+			a.order_no,
+			a.create_time,
+			a.count,
+			a.is_punctuality,
+			a.service_quality,
+			a.service_attitude,
+			b.server_category_name
+		FROM
+			customer_order_assessment a
+			LEFT JOIN customer_order b on a.order_no=b.order_no
+			where b.server_user_id=#{server_user_id}
+		<if test="service_quality != null and service_quality != '' ">
+			and a.service_quality =#{service_quality}
+		</if>
+			<if test="endPage != null and endPage != ''">
+	   			limit #{startPage},#{endPage}
+   			</if>
+	</select>
+	
+	<!-- 查询用户评价数量 -->
+		<select id="findEvaluateNum" resultType="Integer" parameterType="pd">
+		SELECT
+			count(*)
+		FROM
+			customer_order_assessment a
+			LEFT JOIN customer_order b on a.order_no=b.order_no
+			where b.server_user_id=#{server_user_id}
+		<if test="service_quality != null and service_quality != '' ">
+			and a.service_quality =#{service_quality}
+		</if>
+			
+	</select>
+	
+	<!-- 查看评论图片信息 -->
+	<select id="findImageList" resultType="pd" parameterType="pd">
+		SELECT
+			a.assessment_id,
+			a.image_url
+		FROM
+			customer_order_assessment_image  a
+			where a.assessment_id=#{assessment_id}
+	
+	</select>
+	
+	<!-- 帮助中心 -->
+	<select id="findHelpList" resultType="pd" parameterType="pd">
+		SELECT
+			a.id,
+			a.content,
+			a.title
+		FROM
+			app_help a
+		where a.type=#{type}
+	</select>
+	
+	<!-- 修改家人设备信息 -->
+	<update id="updatefamily"  parameterType="pd">
+	 update customer_family_device set
+		<if test="relationship != null and relationship != '' ">
+				relationship=#{relationship}
+		</if>
+    		where id=#{id}
+	</update>
+	
+	<!-- 修改设备客户信息 -->
+	<update id="updatefamilyUser"  parameterType="pd">
+	 update customer_user set
+		<if test="name != null and name != '' ">
+				name=#{name},
+		</if>
+		<if test="head_address != null and head_address != '' ">
+				head_address=#{head_address},
+		</if>
+		<if test="phone != null and phone != '' ">
+				phone=#{phone},
+		</if>
+		<if test="island_name != null and island_name != '' ">
+				island_name=#{island_name},
+		</if>
+		update_time=NOW()
+    		where device_id=#{device_id}
+	</update>
+	
+	<!-- 修改安全岛名称 -->
+	<update id="updatefamilySn"  parameterType="pd">
+	 update customer_user set
+		
+		<if test="island_name != null and island_name != '' ">
+				island_name=#{island_name},
+		</if>
+		update_time=NOW()
+    		where sn=#{sn}
+	</update>
+	
+	
+	<!-- 根据设备id查找设备客户 -->
+	<select id="findUserInfo" resultType="pd" parameterType="pd">
+		SELECT
+			a.id as "id",
+			a.family_id as "family_id",
+			a.device_id as "device_id",
+			a.sn as "sn",
+			a.relationship as "relationship"
+		FROM
+			customer_family_device a
+			where a.id=#{id}
+	</select>
+	
+
+	
+	
+</mapper>

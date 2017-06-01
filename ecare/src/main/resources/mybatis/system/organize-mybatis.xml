@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecare.web.system.organize">
+    
+    <!--查询信息列表-->
+    <select id="findListPage" resultType="pd" parameterType="page">
+    	select 
+			a.id as "id",
+			a.org_cascade as "org_cascade",
+			a.name as "name",
+			a.short_name as "short_name",
+			a.type as "type",
+			a.parent_id as "parent_id",
+			a.order_by as "order_by",
+			a.remark as "remark",
+			a.remove_logo as "remove_logo",
+			a.create_user as "create_user",
+			a.create_time as "create_time",
+			a.update_time as "update_time",
+			b.user_name  as "user_name"	,
+			c.name as "parent_name"
+    	from system_organize a
+    	left join system_user b 
+    	on a.create_user = b.id
+    	left join system_organize c on  c.id = a.parent_id 
+    	where 1=1 
+    	 <if test="pd.name != null and pd.name != ''"><!-- 组织名称检索 -->
+			and a.name like concat('%', #{pd.name},'%')
+		</if>
+		<if test="pd.parent_id != null and pd.parent_id != '' ">
+		 		 and a.parent_id = #{pd.parent_id}
+		</if>
+		<if test="pd.remove_logo != null and pd.remove_logo != ''"><!-- 删除标识检索 -->
+			and a.remove_logo = #{pd.remove_logo}
+		</if>
+		order by a.order_by,a.create_time desc
+    </select>
+    
+    <!--查询信息列表-->
+    <select id="findList" resultType="pd" parameterType="pd">
+    	select
+			a.id as "id",
+			a.org_cascade as "org_cascade",
+			a.name as "name",
+			a.short_name as "short_name",
+			a.type as "type",
+			a.parent_id as "parent_id",
+			a.order_by as "order_by",
+			a.remark as "remark",
+			a.remove_logo as "remove_logo",
+			a.create_user as "create_user",
+			a.create_time as "create_time",
+			a.update_time as "update_time",
+			b.user_name  as "user_name"	,
+			c.name as "parent_name"
+		from
+			system_organize as a
+			inner join system_user as b on a.create_user = b.id 
+			left join system_organize c on a.parent_id = c.id
+			where 1=1 
+		<if test="remove_logo != null and remove_logo != ''">
+			and a.remove_logo =#{remove_logo} 
+		</if>
+		<if test="parent_id != null and parent_id != '' ">
+		 	and a.parent_id = #{parent_id}
+		</if>
+		<if test="id != null and id != '' ">
+		 	and a.id = #{id}
+		</if>
+		order by a.order_by,a.create_time desc
+    </select>
+    
+    <!--查询信息详情-->
+    <select id="findInfo" resultType="pd" parameterType="pd">
+    	select 
+    		a.id as "id",
+    		a.org_cascade as "org_cascade",
+			a.name as "name",
+			a.short_name as "short_name",
+			a.type as "type",
+			a.parent_id as "parent_id",
+			a.order_by as "order_by",
+			a.remark as "remark",
+			a.remove_logo as "remove_logo",
+			a.create_user as "create_user",
+			a.create_time as "create_time",
+			a.update_time as "update_time",
+			b.user_name  as "user_name"	
+    	from system_organize a
+    	left join system_user b 
+    	on a.create_user = b.id
+    	where a.id=#{id}
+    </select>
+    
+    <!--保存信息-->
+    <insert id="save" parameterType="pd">
+    	insert into system_organize (name,org_cascade,short_name,type,parent_id,order_by,remark,remove_logo,create_user,create_time,update_time) 
+    	values (#{name},#{org_cascade},#{short_name},#{type},#{parent_id},#{order_by},#{remark},#{remove_logo},#{create_user},#{create_time},#{update_time})
+   		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			select LAST_INSERT_ID() 
+		</selectKey>
+    </insert>
+    
+    <!--更新信息-->
+    <update id="update" parameterType="pd">
+    	update system_organize set 
+    		<if test="name != null and name != '' ">
+				name=#{name},
+			</if>
+			<if test="org_cascade != null and org_cascade != '' ">
+				org_cascade=#{org_cascade},
+			</if>
+			<if test="short_name != null and short_name != '' ">
+				short_name=#{short_name},
+			</if>
+			<if test="type != null and type != '' ">
+				type=#{type},
+			</if>
+			<if test="parent_id != null and parent_id != '' ">
+				parent_id=#{parent_id},
+			</if>
+			<if test="order_by != null and order_by != '' ">
+				order_by=#{order_by},
+			</if>
+			<if test="remark != null and remark != '' ">
+				remark=#{remark},
+			</if>
+			<if test="remove_logo != null and remove_logo != '' ">
+				remove_logo=#{remove_logo},
+			</if>
+			<if test="create_user != null and create_user != '' ">
+				create_user=#{create_user},
+			</if>
+    		update_time=#{update_time}
+    		where id=#{id}
+    </update>
+    
+    <!--删除信息-->
+    <delete id="delete" parameterType="pd">
+    	delete from system_organize where id=#{id}
+    </delete>
+    
+    <!--删除用户组织信息-->
+    <delete id="deleteUserOrganize" parameterType="String">
+    	delete from system_user_organize where user_id=#{id}
+    </delete>
+    
+    <!--查询已删除用户ids-->
+    <select id="findListIds" parameterType="pd" resultType="Integer">
+    	select 
+    		a.id as "id"
+    	 from system_organize a
+    	 where a.remove_logo='Y'
+    </select>
+    
+    <!--查询已删除信息数量-->
+    <select id="findDelNum" parameterType="pd" resultType="Integer">
+    	select count(*) from system_organize where remove_logo='Y'
+    </select>
+    
+    
+    
+    <select id="findOrganizeId" parameterType="pd" resultType="Integer">
+    	select
+    		a.organize_id as "organize_id"
+    		from system_user_organize a
+    		left join system_organize b on a.organize_id = b.id
+    		where a.user_id=#{user_id} 
+    		<if test="parent_id != null and parent_id != '' ">
+				and type=#{type}
+			</if>
+    </select>
+    
+</mapper>

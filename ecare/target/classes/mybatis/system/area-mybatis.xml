@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecare.web.system.area">
+    
+    
+	<!--查询信息列表-->
+    <select id="findListPage" resultType="pd" parameterType="page">
+    	select 
+    		a.id as "id",
+    		a.name as "name",
+    		a.parent_id as "parent_id",
+    		a.order_by as "order_by",
+    		a.remark as "remark",
+    		a.type as "type",
+    		a.remove_logo as "remove_logo",
+    		a.create_user as "create_user",
+    		a.create_time as "create_time",
+    		b.name as "parent_name"
+    	 from system_area a
+    	 left join system_area b on a.parent_id=b.id
+    	 where 1=1
+    	 <if test="pd.remove_logo != null and pd.remove_logo != ''"><!-- 状态检索 -->
+			and a.remove_logo=#{pd.remove_logo}
+		</if>
+		<if test="pd.name != null and pd.name != ''"><!-- 用户名检索 -->
+			and a.name like concat('%', #{pd.name},'%')
+		</if>
+		order by a.order_by asc, a.create_time desc
+    </select>
+    
+    <select id="findList" parameterType="pd" resultType="pd">
+    	select 
+    		a.id as "id",
+    		a.name as "name",
+    		a.parent_id as "parent_id",
+    		a.order_by as "order_by",
+    		a.remark as "remark",
+    		a.type as "type",
+    		a.remove_logo as "remove_logo",
+    		a.create_user as "create_user",
+    		a.create_time as "create_time",
+    		b.name as "parent_name"
+    	 from system_area a
+    	 left join system_area b on a.parent_id=b.id
+    	 where 1=1
+    	 <if test="remove_logo != null and remove_logo != ''"><!-- 状态检索 -->
+			and a.remove_logo=#{remove_logo}
+		</if>
+		<if test="parent_id != null and parent_id != ''"><!-- 状态检索 -->
+			and a.parent_id=#{parent_id}
+		</if>
+		<if test="id != null and id != ''"><!-- 状态检索 -->
+			and a.id=#{id}
+		</if>
+    	 order by a.order_by asc, a.create_time desc
+    </select>
+    
+    
+	<!--查询信息详情-->
+    <select id="findInfo" resultType="pd" parameterType="pd">
+    	select 
+    		a.id as "id",
+    		a.name as "name",
+    		a.parent_id as "parent_id",
+    		a.order_by as "order_by",
+    		a.remark as "remark",
+    		a.type as "type",
+    		a.remove_logo as "remove_logo",
+    		a.create_user as "create_user",
+    		b.name as "parent_name"
+    	 from system_area a
+    	 left join system_area b on a.parent_id=b.id
+    	 where a.id=#{id}
+    </select>
+    
+    
+    <!--保存信息-->
+    <insert id="save" parameterType="pd">
+    	insert into system_area (
+    			name,
+    			parent_id,
+    			order_by,
+    			remark,
+    			type,
+    			remove_logo,
+    			create_user,
+    			create_time) 
+    		values (
+				#{name},
+				#{parent_id},
+				#{order_by},
+				#{remark},
+				#{type},
+				#{remove_logo},
+				#{create_user},
+				#{create_time})
+    </insert>
+    
+    
+	<!--更新信息-->
+    <update id="update" parameterType="pd">
+    	update system_area set 
+    		<if test="name != null and name != '' ">
+				name=#{name},
+			</if>
+			<if test="order_by != null and order_by != '' ">
+				order_by=#{order_by},
+			</if>
+			<if test="remark != null and remark != '' ">
+				remark=#{remark},
+			</if>
+    		<if test="remove_logo != null and remove_logo != '' ">
+				remove_logo=#{remove_logo},
+			</if>
+    		update_time=#{update_time}
+    		where id=#{id}
+    		
+    </update>
+    
+    
+     <update id="updateType" parameterType="pd">
+    	update system_area set 
+    		<if test="name != null and name != '' ">
+				name=#{name},
+			</if>
+			<if test="order_by != null and order_by != '' ">
+				order_by=#{order_by},
+			</if>
+			<if test="remark != null and remark != '' ">
+				remark=#{remark},
+			</if>
+    		<if test="remove_logo != null and remove_logo != '' ">
+				remove_logo=#{remove_logo},
+			</if>
+    		update_time=#{update_time}
+    		where type like concat(#{type},'%')
+    		
+    </update>
+    
+    
+	<!--删除信息-->
+    <delete id="delete" parameterType="String">
+    	delete from system_area where id=#{id}
+    </delete>
+    
+    
+	<!--查询已删除信息数量-->
+    <select id="findDelNum" parameterType="pd" resultType="Integer">
+    	select count(*) from system_area where remove_logo='Y'
+    </select>
+    
+    
+	<!--查询已删除用户ids-->
+    <select id="findListIds" parameterType="pd" resultType="Integer">
+    	select 
+    		a.id as "id"
+    	 from system_area a
+    	 where a.remove_logo='Y'
+    </select>
+    
+    
+    <!--删除信息-->
+    <delete id="deleteType" parameterType="String">
+    	delete from system_area where type like concat(#{type},'%')
+    </delete>
+    
+    
+</mapper>
+
+
+
+
+
+
+
+
+

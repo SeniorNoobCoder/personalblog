@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecare.web.system.menu">
+    
+    <!-- 获取菜单列表 -->
+    <select id="findListPage" resultType="pd" parameterType="page">
+		select
+			a.id as "id",
+			a.name as "name",
+			a.code as "code",
+			a.parent_id as "parent_id",
+			a.url as "url",
+			a.icon as "icon",
+			a.type as "type",
+			a.level as "level",
+			a.order_by as "order_by",
+			a.remark as "remark",
+			a.remove_logo as "remove_logo",
+			a.create_user as "create_user",
+			a.create_time as "create_time",
+			a.update_time as "update_time",
+			b.user_name  as "user_name"	,
+			c.name as "parent_name"
+		from
+			system_menu as a
+			left join system_user b on a.create_user = b.id 
+			left join system_menu c on c.id = a.parent_id
+		where 1=1
+    	 <if test="pd.parent_id != null and pd.parent_id != ''"><!-- 父id检索 -->
+			and a.parent_id = #{pd.parent_id}
+		</if>
+		<if test="pd.remove_logo != null and pd.remove_logo != ''"><!-- 删除标识检索 -->
+			and a.remove_logo = #{pd.remove_logo}
+		</if>
+		<if test="pd.type != null and pd.type != ''"><!-- 类型检索 -->
+			and a.type = #{pd.type}
+		</if>
+		<if test="pd.level != null and pd.level != ''"><!-- 级别检索 -->
+			and a.level = #{pd.level}
+		</if>
+		order by a.order_by , a.create_time desc
+    </select>
+    
+    <!-- 获取菜单列表 -->
+    <select id="findList" parameterType="pd" resultType="pd">
+  		select
+			a.id as "id",
+			a.name as "name",
+			a.code as "code",
+			a.parent_id as "parent_id",
+			a.url as "url",
+			a.icon as "icon",
+			a.type as "type",
+			a.level as "level",
+			a.order_by as "order_by",
+			a.remark as "remark",
+			a.remove_logo as "remove_logo",
+			a.create_user as "create_user",
+			a.create_time as "create_time",
+			a.update_time as "update_time",
+			b.user_name  as "user_name"	,
+			c.name as "parent_name"
+		from
+			system_menu as a
+			left join system_user b on a.create_user = b.id
+			left join system_menu c on c.id = a.parent_id
+		where 1=1
+    	 <if test="parent_id != null and parent_id != ''"><!-- 父id检索 -->
+			and a.parent_id = #{parent_id}
+		</if> 
+		<if test="remove_logo != null and remove_logo != ''"><!-- 删除标识检索 -->
+			and a.remove_logo = #{remove_logo}
+		</if> 
+		<if test="type != null and type != ''"><!-- 类型标识检索 -->
+			and a.type = #{type}
+		</if> 
+		order by a.order_by , a.create_time desc
+    </select>
+    
+    <!-- 获取菜单详情 -->
+    <select id="findInfo" resultType="pd" parameterType="pd">
+		select
+			a.id as "id",
+			a.name as "name",
+			a.code as "code",
+			a.parent_id as "parent_id",
+			a.url as "url",
+			a.icon as "icon",
+			a.type as "type",
+			a.level as "level",
+			a.order_by as "order_by",
+			a.remark as "remark",
+			a.remove_logo as "remove_logo",
+			a.create_user as "create_user",
+			a.create_time as "create_time",
+			a.update_time as "update_time",
+			b.user_name  as "user_name"	
+		from
+			system_menu as a
+			left join system_user b on a.create_user = b.id
+    	 where a.id=#{id}
+    </select>
+    
+     <!-- 添加菜单 -->
+    <insert id="save" parameterType="pd">
+	    insert into system_menu (name, parent_id, code, url, icon, type, level, order_by, remark, remove_logo, create_user, create_time, update_time) 
+	    values (#{name}, #{parent_id}, #{code}, #{url}, #{icon}, #{type}, #{level}, #{order_by}, #{remark}, #{remove_logo}, #{create_user}, #{create_time}, #{update_time});
+    </insert>
+    
+    <!-- 更新菜单信息 -->
+    <update id="update" parameterType="pd">
+    	update system_menu set 
+    		<if test="name != null and name != '' ">
+				name=#{name},
+			</if>
+    		<if test="code != null and code != '' ">
+				code=#{code},
+			</if>
+			<if test="url != null and url != '' ">
+				url=#{url},
+			</if>
+			<if test="icon != null and icon != '' ">
+				icon=#{icon},
+			</if>
+			<if test="type != null and type != '' ">
+				type=#{type},
+			</if>
+			<if test="level != null and level != '' ">
+				level=#{level},
+			</if>
+			<if test="order_by != null and order_by != '' ">
+				order_by=#{order_by},
+			</if>
+			<if test="remark != null and remark != '' ">
+				remark=#{remark},
+			</if>
+			<if test="remove_logo != null and remove_logo != '' ">
+				remove_logo=#{remove_logo},
+			</if>
+    		update_time=#{update_time}
+    		where id=#{id}
+    </update>
+    <!-- 删除菜单信息 -->
+    <delete id="delete" parameterType="pd">
+    	delete from system_menu where id=#{id}
+    </delete>
+    <!-- 删除角色菜单 -->    
+    <delete id="delRoleMenu" parameterType="pd">
+    	delete from system_role_menu where menu_id=#{id}
+    </delete>
+    
+</mapper>

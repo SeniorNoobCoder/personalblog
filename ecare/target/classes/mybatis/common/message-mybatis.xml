@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.ecare.web.common.message">
+
+	<!-- 查询列表信息 -->
+	<select id="findListPage" parameterType="Page" resultType="pd">
+		select  *
+    	from common_message a
+    		where 1=1
+    		<if test="pd.remove_logo != null and pd.remove_logo != ''">
+			and a.remove_logo=#{pd.remove_logo}
+			</if>
+    		<if test="pd.title != null and pd.title != ''"><!-- 标题检索 -->
+			and a.title like concat('%', #{pd.title},'%')
+			</if>
+			<if test="pd.status != null and pd.status != ''">
+			and a.status=#{pd.status}
+			</if>
+    		order by a.create_time desc
+	</select>
+	<select id="findListPageByUser" parameterType="Page" resultType="pd">
+		SELECT
+			a.id,
+			a.message_id,
+			a.user_id,
+			a.`status`,
+			a.update_time,
+			a.user_type,
+			b.title
+		FROM
+			common_message_user a
+		LEFT JOIN
+			common_message b ON a.message_id = b.id
+		WHERE
+		a.user_type = 'telemarketer'
+		<if test="pd.remove_logo != null and pd.remove_logo != ''">
+			and b.remove_logo=#{pd.remove_logo}
+		</if>
+		<if test="pd.title != null and pd.title != ''"><!-- 标题检索 -->
+			and a.title like concat('%', #{pd.title},'%')
+		</if>
+		<if test="pd.status != null and pd.status != ''">
+			and a.status=#{pd.status}
+		</if>
+		<if test="pd.user_id != null and pd.user_id != ''">
+			and a.user_id=#{pd.user_id}
+		</if>
+		order by a.create_time desc
+	</select>
+	<select id="findListByUser" resultType="pd" parameterType="pd">
+		SELECT
+		a.id,
+		a.message_id,
+		a.user_id,
+		a.`status`,
+		a.update_time,
+		a.user_type,
+		b.title
+		FROM
+		common_message_user a
+		LEFT JOIN
+		common_message b ON a.message_id = b.id
+		WHERE
+		a.user_type = 'telemarketer'
+		<if test="remove_logo != null and remove_logo != ''">
+			and b.remove_logo=#{remove_logo}
+		</if>
+		<if test="title != null and title != ''"><!-- 标题检索 -->
+			and a.title like concat('%', #title},'%')
+		</if>
+		<if test="status != null and status != ''">
+			and a.status=#{status}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and a.user_id=#{user_id}
+		</if>
+		order by a.create_time desc
+	</select>
+	<!--添加-->
+	<insert id="save">
+		insert into common_message(
+			title,
+			source,
+			recipients_id,
+			recipients_name,
+			remark,
+			content,
+			status,
+			remove_logo,
+			operator_id,
+			operator_name,
+			create_time,
+			update_time
+		)value(
+			#{title},
+			#{source},
+			#{recipients_id},
+			#{recipients_name},
+			#{remark},
+			#{content},
+			#{status},
+			#{remove_logo},
+			#{operator_id},
+			#{operator_name},
+			NOW(),
+			NOW()
+		)
+	</insert>
+	<!--添加收件人-->
+	<insert id="saveUser">
+		insert into common_message_user(
+		message_id,
+		user_id,
+		user_type,
+		status,
+		create_time,
+		update_time
+		)value(
+		#{message_id},
+		#{user_id},
+		#{user_type},
+		#{status},
+		NOW(),
+		NOW()
+		)
+	</insert>
+	<!--查询版本信息详情-->
+    <select id="findInfo" parameterType="pd" resultType="pd">
+    	select
+			a.id,
+			a.title,
+			a.source,
+			a.recipients_id,
+			a.recipients_name,
+			a.content,
+			a.`status`,
+			a.remove_logo,
+			a.operator_id,
+			a.operator_name,
+			a.create_time,
+			a.update_time,
+			a.remark
+    	from common_message a
+    	where a.id=#{id}
+    </select>
+
+    <!--更新信息-->
+    <update id="update" parameterType="pd">
+    	update common_message set 
+			<if test="title != null and title != '' ">
+				title=#{title},
+			</if>
+			<if test="source != null and source != '' ">
+				source=#{source},
+			</if>
+			<if test="recipients_id != null and recipients_id != '' ">
+				recipients_id=#{recipients_id},
+			</if>
+			<if test="recipients_name != null and recipients_name != '' ">
+				recipients_name=#{recipients_name},
+			</if>
+			<if test="remark != null and remark != '' ">
+				remark=#{remark},
+			</if>
+			<if test="content != null and content != '' ">
+				content=#{content},
+			</if>
+			<if test="status != null and status != '' ">
+				status=#{status},
+			</if>
+			<if test="remove_logo != null and remove_logo != '' ">
+				remove_logo=#{remove_logo},
+			</if>
+    		update_time = NOW()
+    		where id=#{id}
+    </update>
+	<update id="updateStatus" parameterType="pd">
+		update common_message_user set
+		<if test="status != null and status != '' ">
+			status=#{status},
+		</if>
+		update_time = NOW()
+		where id=#{id}
+	</update>
+    <!--删除信息-->
+    <delete id="delete" parameterType="String">
+    	delete from common_message where id=#{id}
+    </delete>
+	<!--删除信息-->
+	<delete id="delUser" parameterType="String">
+		delete from common_message_user where message_id=#{id}
+	</delete>
+    <!--查询已删除信息数量-->
+    <select id="findDelNum" parameterType="pd" resultType="Integer">
+    	select count(*) from common_message where remove_logo='Y' 
+    </select>
+    
+    <!--查询已删除用户ids-->
+    <select id="findListIds" parameterType="pd" resultType="Integer">
+    	select 
+    		a.id as "id"
+    	 from common_message a
+    	 where a.remove_logo='Y'
+    </select>
+	</mapper>

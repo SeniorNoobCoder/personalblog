@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecare.web.system.road">
+
+    <!-- 查询信息列表 -->
+    <select id="findListPage" resultType="pd" parameterType="page">
+	select
+		a.id as "id",
+		a.organize_id as "organize_id",
+		a.assets as "assets",
+		a.position as "position",
+		a.road_code as "road_code",
+		a.road_name as "road_name",
+		a.road_type as "road_type",
+		a.start_stake as "start_stake",
+		a.end_stake as "end_stake",
+		a.main_mileage as "main_mileage",
+		a.curing_mileage as "curing_mileage",
+		a.remark as "remark",
+		a.order_by as "order_by",
+		a.remove_logo as "remove_logo",
+		a.create_user as "create_user",
+		a.create_time as "create_time",
+		a.update_time as "update_time",
+		b.user_name as "user_name",
+		c.name as "name",
+		c.type as "type"
+	from
+	system_road a
+	inner join system_user as b on a.create_user = b.id
+	inner join  system_organize as c on a.organize_id = c.id
+	where 1=1 
+		<if test="pd.road_name != null and pd.road_name != ''">
+			and a.road_name like concat(concat('%', #{pd.road_name}),'%') 
+		</if>
+		<if test="pd.organize_id != null and pd.organize_id != ''">
+			and a.organize_id like concat(concat('%', #{pd.organize_id}),'%') 
+		</if>
+		<if test="pd.remove_logo != null and pd.remove_logo != ''">
+			and a.remove_logo =#{pd.remove_logo} 
+		</if>
+		order by a.order_by asc,a.create_time desc
+    </select>
+    
+     <!-- 查询信息列表 -->
+    <select id="findList" resultType="pd" parameterType="pd">
+	select
+		a.id as "id",
+		a.organize_id as "organize_id",
+		a.assets as "assets",
+		a.position as "position",
+		a.road_code as "road_code",
+		a.road_name as "road_name",
+		a.road_type as "road_type",
+		a.start_stake as "start_stake",
+		a.end_stake as "end_stake",
+		a.main_mileage as "main_mileage",
+		a.curing_mileage as "curing_mileage",
+		a.remark as "remark",
+		a.order_by as "order_by",
+		a.remove_logo as "remove_logo",
+		a.create_user as "create_user",
+		a.create_time as "create_time",
+		a.update_time as "update_time",
+		b.user_name as "user_name",
+		c.name as "name",
+		c.type as "type"
+	from
+	system_road a
+	inner join system_user as b on a.create_user = b.id
+	inner join  system_organize as c on a.organize_id = c.id
+	where 1=1 
+		<if test="road_name != null and road_name != ''">
+			and a.road_name like concat(concat('%', #{road_name}),'%') 
+		</if>
+		<if test="organize_id != null and organize_id != ''">
+			and a.organize_id like concat(concat('%', #{organize_id}),'%') 
+		</if>
+		<if test="remove_logo != null and remove_logo != ''">
+			and a.remove_logo =#{remove_logo} 
+		</if>
+		order by a.order_by asc,a.update_time desc
+    </select>
+    
+    <!--查询已删除信息数量-->
+    <select id="findDelNum" parameterType="pd" resultType="Integer">
+    	select count(*) from system_road where remove_logo='Y'
+    </select>
+    
+    <!-- 添加信息 -->
+     <insert id="save" parameterType="pd">
+    	insert into system_road (id,organize_id,assets,position,road_code,road_name,road_type,start_stake,end_stake,main_mileage,curing_mileage,remark,order_by,remove_logo,create_user,create_time,update_time) 
+    	values 
+    	(#{id},#{organize_id},#{assets},#{position},#{road_code},#{road_name},#{road_type},#{start_stake},#{end_stake},#{main_mileage},#{curing_mileage},#{remark},#{order_by},#{remove_logo},#{create_user},#{create_time},#{update_time})
+    </insert>
+    
+    
+    <select id="findInfo" resultType="pd" parameterType="pd">
+    select
+		a.id as "id",
+		a.organize_id as "organize_id",
+		a.assets as "assets",
+		a.position as "position",
+		a.road_code as "road_code",
+		a.road_name as "road_name",
+		a.road_type as "road_type",
+		a.start_stake as "start_stake",
+		a.end_stake as "end_stake",
+		a.main_mileage as "main_mileage",
+		a.curing_mileage as "curing_mileage",
+		a.remark as "remark",
+		a.order_by as "order_by",
+		a.remove_logo as "remove_logo",
+		a.create_user as "create_user",
+		a.create_time as "create_time",
+		a.update_time as "update_time",
+		b.user_name as "user_name"
+	from
+	system_road a
+	inner join system_user as b on a.create_user = b.id
+	where a.id=#{id}
+    </select>
+    
+    <!-- 修改信息 -->
+    <update id="update" parameterType="pd">
+    	update system_road set 
+    		<if test="organize_id != null and organize_id != '' ">
+				organize_id=#{organize_id},
+			</if>
+			<if test="assets != null and assets != '' ">
+				assets=#{assets},
+			</if>
+			<if test="position != null and position != '' ">
+				position=#{position},
+			</if>
+			<if test="road_code != null and road_code != '' ">
+				road_code=#{road_code},
+			</if>
+			<if test="road_name != null and road_name != '' ">
+				road_name=#{road_name},
+			</if>
+			<if test="road_type != null and road_type != '' ">
+				road_type=#{road_type},
+			</if>
+			<if test="start_stake != null and start_stake != '' ">
+				start_stake=#{start_stake},
+			</if>
+			<if test="end_stake != null and end_stake != '' ">
+				end_stake=#{end_stake},
+			</if>
+			<if test="main_mileage != null and main_mileage != '' ">
+				main_mileage=#{main_mileage},
+			</if>
+			<if test="curing_mileage != null and curing_mileage != '' ">
+				curing_mileage=#{curing_mileage},
+			</if>
+			<if test="remark != null and remark != '' ">
+				remark=#{remark},
+			</if>
+			<if test="order_by != null and order_by != '' ">
+				order_by=#{order_by},
+			</if>
+			<if test="remove_logo != null and remove_logo != '' ">
+				remove_logo=#{remove_logo},
+			</if>
+			<if test="create_user != null and create_user != '' ">
+				create_user=#{create_user},
+			</if>
+    		update_time=#{update_time}
+    		where id=#{id}
+    </update>
+    
+    <!--删除信息-->
+    <delete id="delete" parameterType="pd">
+    	delete from system_road where id=#{id}
+    </delete>
+    
+     <!--查询已删除用户ids-->
+    <select id="findListIds" parameterType="pd" resultType="Integer">
+    	select 
+    		a.id as "id"
+    	 from system_road a
+    	 where a.remove_logo='Y'
+    </select>
+    
+    
+    <select id="findTree" parameterType="pd" resultType="pd">
+    	select
+			b.id as "id",
+			b.name as "name",
+			b.type as "type",
+			c.name as "parent_name"
+		from
+		system_organize as b 
+		left join system_organize c on  c.id = b.parent_id 
+		where 1=1 
+		<if test="organize_id!=null and organize_id!=''">
+			and b.parent_id=#{organize_id}
+		</if>
+		<if test="id!=null and id!=''">
+			and b.parent_id=#{id}
+		</if>
+    </select>
+    
+    <select id="findSonTree" resultType="pd" parameterType="pd">
+    select
+		a.id as "id",
+		a.organize_id as "organize_id",
+		a.assets as "assets",
+		a.position as "position",
+		a.road_code as "road_code",
+		a.road_name as "road_name",
+		a.road_type as "road_type",
+		a.start_stake as "start_stake",
+		a.end_stake as "end_stake",
+		a.main_mileage as "main_mileage",
+		a.curing_mileage as "curing_mileage",
+		a.remark as "remark",
+		a.order_by as "order_by",
+		a.remove_logo as "remove_logo",
+		a.create_user as "create_user",
+		a.create_time as "create_time",
+		a.update_time as "update_time",
+		b.name as "name",
+		b.type as "type",
+		c.user_name as "user_name",
+		d.name as "parent_name"
+	from
+	system_road a
+	inner join  system_organize as b on a.organize_id = b.id
+	left join system_user as c on a.create_user = c.id
+	left join  system_organize as d on b.parent_id = d.id
+	where 1=1
+	<if test="road_name != null and road_name != ''">
+			and a.road_name like concat(concat('%', #{road_name}),'%') 
+		</if>
+		<if test="organize_id != null and organize_id != ''">
+			and a.organize_id like concat(concat('%', #{organize_id}),'%') 
+		</if>
+		<if test="id != null and id != ''">
+			and a.organize_id like concat(concat('%', #{id}),'%') 
+		</if>
+		<if test="remove_logo != null and remove_logo != ''">
+			and a.remove_logo =#{remove_logo} 
+		</if>
+    </select>
+    
+    <!--  -->
+    <select id="findRoadList" parameterType="pd" resultType="pd">
+    select
+		a.id as "id",
+		a.organize_id as "organize_id",
+		a.assets as "assets",
+		a.position as "position",
+		a.road_code as "road_code",
+		a.road_name as "road_name",
+		a.road_type as "road_type",
+		a.start_stake as "start_stake",
+		a.end_stake as "end_stake",
+		a.main_mileage as "main_mileage",
+		a.curing_mileage as "curing_mileage",
+		a.remark as "remark",
+		a.order_by as "order_by",
+		a.remove_logo as "remove_logo",
+		a.create_user as "create_user",
+		a.create_time as "create_time",
+		a.update_time as "update_time"
+	from
+	system_road a
+	where a.organize_id=#{organize_id}
+    </select>
+    
+    <!-- 根据公司所计算里程 -->
+    <select id="findsump"  parameterType="pd" resultType="pd">
+    select
+		SUM(start_stake) as "start",
+		SUM(end_stake) as "end",
+		a.id as "id",
+		a.organize_id as "organize_id",
+		b.parent_id as "parent_id",
+		b.`name`as "name",
+		a.assets as "assets",
+		a.position as "position",
+		a.road_code as "road_code",
+		a.road_name as "road_name",
+		a.road_type as "road_type",
+		a.start_stake as "start_stake",
+		a.end_stake as "end_stake",
+		a.main_mileage as "main_mileage",
+		a.curing_mileage as "curing_mileage",
+		a.remark as "remark",
+		a.order_by as "order_by",
+		a.remove_logo as "remove_logo",
+		a.create_user as "create_user",
+		a.create_time as "create_time",
+		a.update_time as "update_time"
+	from
+	system_road a
+LEFT JOIN system_organize b on a.organize_id=b.id
+GROUP BY parent_id 
+    </select>
+    
+    <!-- 根据养护所计算历程 -->
+    <select id="findsumo"  parameterType="pd" resultType="pd">
+    select
+		SUM(start_stake) as "start",
+		SUM(end_stake) as "end",
+		a.id as "id",
+		a.organize_id as "organize_id",
+		b.parent_id as "parent_id",
+		b.`name`as "name",
+		a.assets as "assets",
+		a.position as "position",
+		a.road_code as "road_code",
+		a.road_name as "road_name",
+		a.road_type as "road_type",
+		a.start_stake as "start_stake",
+		a.end_stake as "end_stake",
+		a.main_mileage as "main_mileage",
+		a.curing_mileage as "curing_mileage",
+		a.remark as "remark",
+		a.order_by as "order_by",
+		a.remove_logo as "remove_logo",
+		a.create_user as "create_user",
+		a.create_time as "create_time",
+		a.update_time as "update_time"
+	from
+	system_road a
+LEFT JOIN system_organize b on a.organize_id=b.id
+GROUP BY organize_id
+    </select>
+    
+    <select id="findOrg" parameterType="pd" resultType="pd">
+    select 
+			a.id as "id",
+			a.name as "name",
+			a.short_name as "short_name",
+			a.type as "type",
+			a.parent_id as "parent_id",
+			a.order_by as "order_by",
+			a.remark as "remark",
+			a.remove_logo as "remove_logo",
+			a.create_user as "create_user",
+			a.create_time as "create_time",
+			a.update_time as "update_time"
+    	from system_organize a
+    	where a.parent_id = #{id}
+    </select>
+    
+</mapper>
+
+
+
+
+
+
+
+
+
