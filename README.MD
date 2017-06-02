@@ -42,4 +42,4 @@ e看护养老服务平台在给老人提供服务的同时，家人的APP 手机
 * 服务器环境：数据库服务器和应用服务器与异构项目共用；
 * 操作终端环境：IE浏览器，推荐IE8及以上版本。
 
-                                            Copyright @ 2016-2017 By SeniorNoobCoder Allrights Reserved.
+                                       Copyright @ 2016-2017 By SeniorNoobCoder Allrights Reserved.
