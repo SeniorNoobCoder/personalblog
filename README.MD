@@ -1,5 +1,5 @@
 # This is a personal project
-## welcom give some advices to me
+## Welcom give some advices to me
 
 ## Here are some notes on this project
 
