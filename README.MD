@@ -34,8 +34,10 @@ e看护养老服务平台在给老人提供服务的同时，家人的APP 手机
 ![image](https://github.com/SeniorNoobCoder/personalblog/blob/master/images/set.png)
 
 ### 开发环境
-* 数据库：Mysql；
-* 应用服务器：Tomcat；
+* 运行环境：jdk1.7
+* 数据库：Mysql5.0；
+* 应用服务器：Tomcat7；
+* 系统架构：spring+springmvc+mybatis+maven
 * 操作系统：windows；
 * 服务器环境：数据库服务器和应用服务器与异构项目共用；
 * 操作终端环境：IE浏览器，推荐IE8及以上版本。
