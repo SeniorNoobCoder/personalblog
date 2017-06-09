@@ -1,2 +1,45 @@
-# This is a personalblog project
-## welcom give some advices to me
+# This is a personal project
+## Welcom give some advices to me
+
+## Here are some notes on this project
+
+# E看护服务管理平台
+
+### 为解决老年人日常生活及出行方便，实现家人实时关注老人的活动及协助老人照顾老人日常生活，以下列五项为目标而设计实现看护服务。
+- 1、移动化服务
+通过e看护移动终端设备的使用，老人可以随时随地带在身边，无论是老人在家，购物还是参加各项文体活动，通过通信及网络技术及时服务于老人的各项需求，摆脱了传统有线终端设备的地域限制和不足。
+- 2、智能化服务
+家人通过定位服务功能，可以智能化查看老人当前所在位置，通过设置安全区域，可以对老人活动范围起到预警作用，极大的降低了老人特别是智障老人的意外出走，丢失现象。
+老人通过e看护移动终端设备可以直接一键呼叫云客服中心，云客服中心工作人员会根据老人的描述判断所需服务，系统智能匹配下单提供相关服务，只要老人表达服务需要，其它都交由智能云客服中心解决。
+家人可以通过e看护 APP 的服务提供功能，直接下单老人所需的服务，系统会智能匹配相关合作服务单位，解决了家人不断寻找联系的繁琐，并提供了高可靠，高服务质量的保证。
+- 3、准确化服务
+e看护的移动化终端设备都拥有独有的识别码，家人通过手机APP 对移动终端设备的绑定，以及老人信息的录入，云客服中心可以准确定位老人详细信息，包含各项医疗，饮食注意事项甚至喜好情况。根据每一个老人提供属于自己独有的多元服务。
+- 4、多元化服务
+e看护养老服务平台可以提供紧急救助服务，出行服务，社区服务及日常生活服务四大类，其中每项大类服务中又包含了十几类对应的相关小类服务，并且根据家人和老人的需要，以及合作服务单位的不断发展壮大，各种服务会源源不断更新，我们的宗旨是只有想不到的要求，没有做不到的服务。
+- 5、及时性服务
+e看护养老服务平台在给老人提供服务的同时，家人的APP 手机端会及时收到通知，对老人的服务内容，情况以及结果起到及时知悉，远程监护的作用，极大的提高了信息的及时性和准确性保障。
+
+## 以下是项目部分演示图：
+
+### 登录页面
+
+![image](https://github.com/SeniorNoobCoder/personalblog/blob/master/images/login.png)
+
+### 首页如下：
+
+![image](https://github.com/SeniorNoobCoder/personalblog/blob/master/images/index.png)
+
+### 系统设置：
+
+![image](https://github.com/SeniorNoobCoder/personalblog/blob/master/images/set.png)
+
+### 开发环境
+* 运行环境：jdk1.7
+* 数据库：Mysql5.0；
+* 应用服务器：Tomcat7；
+* 系统架构：spring+springmvc+mybatis+maven
+* 操作系统：windows；
+* 服务器环境：数据库服务器和应用服务器与异构项目共用；
+* 操作终端环境：IE浏览器，推荐IE8及以上版本。
+
+                                       Copyright @ 2016-2017 By SeniorNoobCoder Allrights Reserved.
